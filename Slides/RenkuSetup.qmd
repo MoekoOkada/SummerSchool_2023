@@ -1,0 +1,59 @@
+---
+title: Renku set up
+author: Moeko Okada
+format: revealjs
+---
+
+## Set up renku platform
+
+1. Access to RENKU: [https://renkulab.io/](https://renkulab.io/)
+2. Log in to RENKU with edu-ID / GitHub / ORCID
+3. Search Project: moko.13.ts/polyploid-rna-seq-analyses
+
+##
+
+4. Select the project
+
+    ![project](./photos/Project.png)
+
+##
+
+**5. Fork the project**
+
+Click "Fork" icon.
+
+![Fork](./photos/Fork.png)
+
+##
+
+Change the project name to distingish from original.
+Then click "Fork Project" icon
+
+![Name](./photos/change_names.png)
+
+## Wait for a while...
+
+## Project setting
+
+::: {style="font-size: 0.8em"}
+
+1. Click "V" icon
+2. Select "Start with options"
+3. Select:
+    - r, 2 CPU,
+    - 8G RAM,
+    - 64G storage
+4. Click "Start session" icon.
+
+:::
+
+![](./photos/setting.png){.absolute top=50 right=50 width=50%}
+
+## Wait for a while until it loaded!
+
+Start page looks like Rstudio.
+
+Click "terminal" to use command line.
+
+![](./photos/start.png)
+

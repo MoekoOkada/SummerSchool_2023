@@ -1,0 +1,492 @@
+---
+title: Homoeologous Expression Analysis
+author: Moeko Okada
+format: revealjs
+---
+
+## Today's Plan
+
+::: {style="font-size: 0.8em"}
+
+1. Data download
+2. Quality control
+3. Homoeologous Mapping
+4. Read sorting by EAGLE-RC
+5. Read count
+   1. read count
+   2. make count matrix
+6. Expression analysis
+   1. Clustering
+   2. Homoeolog ratio test
+   3. GO enrichment analysis (if we have time...)
+
+:::
+
+## RNA-seq warkflow review
+
+- Sequencing
+- Quality control
+- Mapping/ Alignment
+- Read count
+- Estimate Expression level
+  - Differential expression analysis
+  - Functional Analyses
+  - etc...
+
+## Expression analysis in polyploids
+
+![KK Shimizu (2022) Curr. Opin. Plant Biol. ](./photos/HomoeologousExpression.jpeg)
+
+## RNA-seq warkflow review
+
+- Sequencing
+- Quality control
+- **Homoeologous Mapping/ Alignment**
+- **Read classification**
+- Read count
+- Estimate Expression level
+  - Differential expression analysis
+  - Functional Analyses
+  - etc...
+
+## Today's sample
+
+***Arabidopsis kamchatica***
+
+<br>
+
+- Accession: murodo
+- RNA from root
+- Control and zinc treatment for 48h
+- 3 replicates for each condition
+
+![](./photos/kam.jpg){.absolute top=50 right=50 width=30%}
+
+
+::: aside
+https://www.bg.s.u-tokyo.ac.jp/nikko-old/5_jokyo/species/Arabidopsis_kamchatica.html
+:::
+
+## Today's Plan
+
+::: {style="font-size: 0.8em"}
+
+1. Data download
+2. Quality control
+3. Homoeologous Mapping
+4. Read sorting by EAGLE-RC
+5. Expression analysis
+6. Clustering
+7. Homoeolog ratio test
+8. GO enrichment analysis (if we have time...)
+
+:::
+
+## JFYI...
+
+:::{style="font-size: 0.8em"}
+
+- Lines with `$` mean commands you use.
+  - If you want to copy and paste, exclude `$`.
+
+
+- I put the name of directory you should be before `$`.
+  - If you are not there, please run the `cd` command
+
+
+- Lines without `$` mean standard output on the terminal.
+
+:::
+
+```bash
+$ cd src
+src $ pwd
+/tmp/eagle/work/polyploid-rna-seq-analyses/src
+src $
+```
+
+## 1. Data download
+
+1-1. Download genome data
+
+```bash
+$ cd src
+src $ pwd
+/tmp/eagle/work/polyploid-rna-seq-analyses/src
+src $ wget -O genome.tar.gz https://drive.switch.ch/index.php/s/ZQzcTZ5lGJEcCbA/download
+src $ ls
+genome.tar.gz  scripts
+src $ tar xvzf genome.tar.gz
+src $ ls
+genome  genome.tar.gz  scripts
+src $
+```
+
+## Data download
+
+1-2. Download raw sequence data
+
+```bash
+$ cd /src
+src $ pwd
+/tmp/eagle/work/polyploid-rna-seq-analyses/src
+src $ wget -O fastq.tar.gz https://drive.switch.ch/index.php/s/0ny11xweoA5WhEX/download
+src $ ls
+fastq.tar.gz  genome  genome.tar.gz  scripts
+src $ tar xvzf fastq.tar.gz
+src $ ls
+fastq  fastq.tar.gz  genome  genome.tar.gz  scripts
+src $ ls fastq
+MUR_1_R1_ds.fastq.gz  MUR_3_R1_ds.fastq.gz       MUR_R48h_2_R1_ds.fastq.gz  trimmomatic_adapters.txt
+MUR_2_R1_ds.fastq.gz  MUR_R48h_1_R1_ds.fastq.gz  MUR_R48h_3_R1_ds.fastq.gz
+src $
+```
+
+## 2. Quality control
+
+Trimmomatic ([Bolger et al. _Bioinformatics_ 2014.](https://academic.oup.com/bioinformatics/article/30/15/2114/2390096>))
+
+- Remove sequencer-specific adapter sequence
+- Remove low quality reads (Q < 30)
+- Remove too short reads (< 40)
+- Use only reads passed the criteria
+
+## 2. Quality control
+
+Use shell script `1_qc.sh` to run Trimmomatics for all data.
+
+```shell
+#!/bin/sh
+# 1_qc.sh
+# Project: SummerSchool
+# Date: 4-Jul-2023
+# Author: Moeko Okada
+
+cd /tmp/eagle/work/polyploid-rna-seq-analyses/src
+mkdir 1_qc
+cd fastq/
+
+for i in `ls *_R1_ds.fastq.gz`; do
+  f=`basename ${i} _R1_ds.fastq.gz`
+  echo "# start ${f} " $(date)
+
+  trimmomatic SE -phred33 -threads 2 \
+    ${i} ../1_qc/${f}_ds_clean.fastq.gz \
+    ILLUMINACLIP:trimmomatic_adapters.txt:2:30:10 \
+    SLIDINGWINDOW:4:30 MINLEN:40
+
+  echo "# done ${f} " $(date)
+done
+```
+
+## 2. Quality control
+
+Make sure you are in `fastq` directory.
+
+```bash
+src $ cd fastq
+fastq $ pwd
+/tmp/eagle/work/polyploid-rna-seq-analyses/src/fastq
+fastq $
+fastq $ bash ../scripts/1_qc.sh
+fastq $
+```
+
+<br>
+
+:::{style="font-size : 0.8em"}
+
+You will get 4 `.fastq.gz` files in
+
+`/tmp/eagle/work/polyploid-rna-seq-analyses/src/1_qc`
+
+:::
+
+## 3. Homoeologous Mapping
+
+:::{style="font-size:0.8em"}
+
+For read classification by EAGLE-RC, reads should be mapped to each subgenome respectively.
+:::
+
+![](./photos/sorting.png){.absolute right=300 height="60%"}
+
+::: aside
+Kuo et al. _Brief. Bioinfom_ 2020
+:::
+
+## Mapping softwares
+
+:::{style="font-size:0.7em"}
+
+- BWA (DNA reads to genome sequence) ([Li and Durbin _Bioinformatics_ 2009.](https://academic.oup.com/bioinformatics/article/25/14/1754/225615))
+- **HISAT2** (RNA/DNA reads to genome sequence) ([Kim et al. _Nat. Biotech._ 2019.](https://www.nature.com/articles/s41587-019-0201-4))
+- bowtie2 (RNA reads to transcriptome sequence) ([Kim et al. _Nat. Method_ 2015](https://www.nature.com/articles/nmeth.3317))
+- STAR (DNA/RNA to genome sequence) ([Dobin et al. _Bioinformatics_ 2013](https://academic.oup.com/bioinformatics/article/29/1/15/272537))
+
+STAR is recommended to EAGLE-RC.
+
+But today we will use HISAT2 because of the time and resource limitation.
+
+<br>
+
+###### Other required software
+
+samtools ([Li et al. _Bioinfirmatics_ 2008.](https://academic.oup.com/bioinformatics/article/25/16/2078/204688))
+
+:::
+
+## 3. Homoeologous Mapping
+
+Use shell script `2_map.sh` to run Trimmomatics for all data.
+
+```shell
+#!/bin/sh
+# 2_map.sh
+# Project: SummerSchool
+# Date: 4-Jul-2023
+# Author: Moeko Okada
+
+cd /tmp/eagle/work/polyploid-rna-seq-analyses/src
+mkdir 2_map
+cd 1_qc/
+
+
+for i in `ls *_ds_clean.fastq.gz`; do
+  f=`basename ${i} _clean.fastq.gz`
+  echo "# start ${f} " $(date)
+
+  hisat2 -p 2 -x ../genome/Ahal_v2_2 -U ${i} | samtools view -SbF4 -q 40 - | samtools sort -m 8G -@ 2 -o ../2_map/${f}_hal.bam
+  hisat2 -p 2 -x ../genome/Alyr_v2_2 -U ${i} | samtools view -SbF4 -q 40 - | samtools sort -m 8G -@ 2 -o ../2_map/${f}_lyr.bam
+  samtools index ../2_map/${f}_hal.bam
+  samtools index ../2_map/${f}_lyr.bam
+
+  echo "# done ${f} " $(date)
+done
+```
+
+## 3. Homoeologous Mapping
+
+Make sure you are in 1_qc directory.
+
+```shell
+fastq $ cd ../1_qc
+1_qc $ pwd tmp/eagle/work/polyploid-rna-seq-analyses/src/1_qc
+1_qc $ bash ../scripts/2_map.sh
+1_qc $
+```
+
+<br>
+
+:::{style="font-size : 0.8em"}
+
+You will get 4 `.bam` and 4 `.bam.bai` files in
+
+`/tmp/eagle/work/polyploid-rna-seq-analyses/src/2_map`
+
+:::
+
+## 4. Read sorting by EAGLE-RC
+
+:::{style="font-size:0.8em"}
+
+EAGLE-RC ([Kuo et al. _Brief. Bioinfom_ 2020](https://academic.oup.com/bib/article/21/2/395/5251019))
+
+
+- Normal mode
+  - Requires gene annotation and homoeologous list
+  - High accuracy
+  - Takes a while
+- NGI mode
+  - Requires only reference genome info (fasta and .fai)
+  - Low accuracy
+  - Fast
+
+:::
+
+:::aside
+
+https://github.com/tony-kuo/eagle
+
+:::
+
+## 4. Read sorting by EAGLE-RC
+
+:::{style="font-size:0.9em"}
+
+Today, we will use NGI mode.
+
+<br>
+
+Please take a look [github page](https://github.com/tony-kuo/eagle) for
+
+- creating homoeologous list
+- how to run normal mode
+- how to use eagle-rc for genotyping from DNA-seq data
+- etc...
+
+You maybe required to install some softwares.
+
+:::
+
+:::aside
+
+https://github.com/tony-kuo/eagle
+
+:::
+
+## 4. Read sorting by EAGLE-RC
+
+Use shell script `3_eagle.sh` to run Trimmomatics for all data.
+
+```shell
+#!/bin/sh
+# 3_eagle.sh
+# Project: SummerSchool
+# Date: 4-Jul-2023
+# Author: Moeko Okada
+
+cd /tmp/eagle/work/polyploid-rna-seq-analyses/src
+mkdir 3_eagle
+cd 2_map/
+
+
+for i in `ls *_hal.bam`; do
+  f=`basename ${i} _hal.bam`
+  echo "# start ${f} " $(date)
+
+  eagle-rc --ngi --ref1=../genome/Ahal_v2_2.fa --ref2=../genome/Alyr_v2_2.fa --bam1=../2_map/${i} --bam2=../2_map/${f}_lyr.bam -o ../3_eagle/${f}.eaglerc > ../3_eagle/${f}.eaglerc.stdout.log 2> ../3_eagle/${f}.eaglerc.errout.log
+
+  echo "# done ${f} " $(date)
+done
+```
+
+## 4. Read sorting by EAGLE-RC
+
+Make sure you are in `2_map` directory!
+
+```bash
+1_qc $ cd ../2_map
+2_map $ pwd
+/tmp/eagle/work/polyploid-rna-seq-analyses/src/2_map
+2_map $ bash ../scripts/3_eagle.sh
+2_map $
+```
+
+## Output file of EAGLE-RC
+
+:::{style="font-size:0.8em"}
+
+- *.ref.bam: reads with reference allele
+- *.alt.bam: reads with alternative allele
+- *.unk.bam: ambiguous reads
+- *.mul.bam: multi-allele reads (empty when we use NGI mode)
+
+<br>
+
+- eaglerc1: based on reference 1 (today's case: halleri genome)
+- eaglerc2: based on reference 2 (today's case: lyrata genome)
+
+To make it faster and simpler, we will use `*.eaglerc1.ref.bam` and `*.eaglerc1.alt.bam`.
+
+:::
+
+# 5. Expression analysis
+
+## 5-1. Count mapped read
+
+featureCounts ([Liao et al. _Bioinformatics_ 2014.](https://academic.oup.com/bioinformatics/article/30/7/923/232889))
+
+<br>
+
+#### Requirements
+
+- gene annotation (gtf file)
+- mapped bam file
+
+## 5-1. Count mapped read
+
+Use shell script `4_count.sh` to run Trimmomatics for all data.
+
+```shell
+#!/bin/sh
+# 4_count.sh
+# Project: SummerSchool
+# Date: 4-Jul-2023
+# Author: Moeko Okada
+
+cd /tmp/eagle/work/polyploid-rna-seq-analyses/src
+mkdir 4_count
+cd 3_eagle/
+
+
+for i in `ls *.eaglerc1.ref.bam`; do
+  f=`basename ${i} .eaglerc1.ref.bam`
+  echo "# start ${f} " $(date)
+
+  featureCounts -T 2 -t exon -g transcript_id -a ../genome/Ahal_v2_2.gtf -o ../4_count/${f}_hal_counts.txt ${i}
+  featureCounts -T 2 -t exon -g transcript_id -a ../genome/Alyr_v2_2.gtf -o ../4_count/${f}_lyr_counts.txt ${f}.eaglerc2.ref.bam
+
+  echo "# done ${f} " $(date)
+done
+```
+
+## 5-1. Count mapped read
+
+Make sure you are in the "3_eagle" directory.
+
+```bash
+3_eagle $ pwd
+/tmp/eagle/work/polyploid-rna-seq-analyses/src/3_eagle
+3_eagle $ bash ../scripts/4_count.sh
+3_eagle $
+```
+
+## 5-2. Make read count matrix
+
+For further expression analysis, prepare a count matrix looks like this.
+
+:::{style="font-size:0.8em"}
+
+|gene_id|MUR_1|MUR_2|MUR_3|MUR_1_48h|MUR_2_48h|MUR_3_48h|
+|---|-----:|-----:|-----:|-----:|-----:|-----:|
+|gene1|10|8|11|58|62|65|
+|gene2|0|0|0|0|0|0|
+|gene3|100|103|99|5|2|6|
+
+:::
+
+## 5-2. Make Expression table
+
+Make sure you are in `4_count` directory!
+
+```bash
+3_eagle $ cd ../4_count
+4_count $ pwd
+/tmp/eagle/work/polyploid-rna-seq-analyses/src/4_count
+4_count $ (echo "gene_id";ls *_hal_counts.txt; ) | sed -e s/_hal_counts.txt//g | tr '\n' '_hal\t' | sed 's/\s*$//' > hal_counts.tsv
+4_count $ (echo "gene_id";ls *_lyr_counts.txt; ) | sed -e s/_ds_lyr_counts.txt//g | tr '\n' '_lyr\t' | sed 's/\s*$//' > lyr_counts.tsv
+4_count $ echo "" >> hal_counts.tsv
+4_count $ echo "" >> lyr_counts.tsv
+4_count $ python /tmp/eagle/scripts/tablize.py -skip 1 -a -i 0 -c 6 *_hal_counts.txt >> hal_counts.tsv
+4_count $ python /tmp/eagle/scripts/tablize.py -skip 1 -a -i 0 -c 6 *_lyr_counts.txt >> lyr_counts.tsv
+4_count $
+```
+
+<br>
+
+## 6. Expression analysis
+
+
+- Expression analysis
+- Clustering
+- Homoeolog ratio test
+
+
+## Advanced Excercise 1
+
+How about the zinc treated samples?
+
+## Advanced Excercise 2
+
+Compare expression between control and zin condition.
