@@ -4,7 +4,6 @@
 # Date: 4-Jul-2023
 # Author: Moeko Okada
 
-cd /tmp/eagle/work/polyploid-rna-seq-analyses/src
 mkdir 4_count
 cd 3_eagle/
 

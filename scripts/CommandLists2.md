@@ -182,7 +182,11 @@ heatmap.2(my.geneset,
 dev.off()
 ```
 
-## 7. Heatmap
+## Homoeologous ratio test
 
+### Make sure you are in `scripts` directory.
 
-## 8. Homoeologous ratio test
+```bash
+$ cd src/scripts
+scripts $ R --vanilla --slave --args ../exp/pval.txt ../exp/homoeolog_RPKM.txt label.txt < calcpval_one.R
+```

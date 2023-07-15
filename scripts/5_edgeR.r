@@ -5,7 +5,7 @@ library(stringr)
 library(gplots)
 
 # load count data
-setwd("/tmp/eagle/work/polyploid-rna-seq-analyses/src/exp")
+setwd("src/exp")
 hal_count <- read.table("hal_counts.tsv", header = T, row.names = 1, sep = "\t")
 lyr_count <- read.table("lyr_counts.tsv", header = T, row.names = 1, sep = "\t")
 

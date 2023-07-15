@@ -20,7 +20,7 @@ List of commands used in the polyploidy summer school for lectureres.
 ### Genome Data
 
 ```bash
-$ cd /tmp/eagle/work/polyploid-rna-seq-analyses/src
+$ cd src
 src $ wget -O genome.tar.gz https://drive.switch.ch/index.php/s/ZQzcTZ5lGJEcCbA/download
 src $ ls
 genome.tar.gz  scripts
@@ -33,7 +33,6 @@ src $
 ### downsampled read data
 
 ```bash
-$ cd /tmp/eagle/work/polyploid-rna-seq-analyses/src
 src $ wget -O fastq.tar.gz https://drive.switch.ch/index.php/s/0ny11xweoA5WhEX/download
 src $ ls
 fastq.tar.gz  genome  genome.tar.gz  scripts
@@ -49,12 +48,11 @@ src $
 ## 1. Quality control
 
 Use shell script to run all samples.  
-Make sure you are in the "fastq" directory.
+Make sure you are in the "src" directory.
 
 ```bash
-$ cd /tmp/eagle/work/polyploid-rna-seq-analyses/src/fastq
-fastq $ bash ../scripts/1_qc.sh 
-fastq $
+src $ bash scripts/1_qc.sh 
+src $
 ```
 
 #### 1_qc.sh: [https://github.com/MoekoOkada/SummerSchool_2023/blob/main/scripts/1_qc.sh](https://github.com/MoekoOkada/SummerSchool_2023/blob/main/scripts/1_qc.sh)
@@ -62,12 +60,11 @@ fastq $
 ## 2. Mapping
 
 Use shell script to run all samples.  
-Make sure you are in the "1_qc" directory.
+Make sure you are in the "src" directory.
 
 ```bash
-$ cd /tmp/eagle/work/polyploid-rna-seq-analyses/src/1_qc
-1_qc $ bash ../scripts/2_map.sh 
-1_qc $
+src $ bash scripts/2_map.sh 
+src $
 ```
 
 #### 2_map.sh: [https://github.com/MoekoOkada/SummerSchool_2023/blob/main/scripts/2_map.sh](https://github.com/MoekoOkada/SummerSchool_2023/blob/main/scripts/2_map.sh)
@@ -78,12 +75,11 @@ $ cd /tmp/eagle/work/polyploid-rna-seq-analyses/src/1_qc
 Use EAGLE-RC software to classify reads.
 
 Use shell script to run all samples.  
-Make sure you are in the "2_map" directory.
+Make sure you are in the "src" directory.
 
 ```bash
-$ cd /tmp/eagle/work/polyploid-rna-seq-analyses/src/2_map
-2_map $ bash ../scripts/3_eagle.sh 
-2_map $
+src $ bash scripts/3_eagle.sh 
+src $
 ```
 
 #### 3_eagle.sh: [https://github.com/MoekoOkada/SummerSchool_2023/blob/main/scripts/3_eagle.sh](https://github.com/MoekoOkada/SummerSchool_2023/blob/main/scripts/3_eagle.sh)
@@ -94,12 +90,11 @@ $ cd /tmp/eagle/work/polyploid-rna-seq-analyses/src/2_map
 Count the number of reads using featureCounts software.
 
 Use shell script to run all samples.  
-Make sure you are in the "3_eagle" directory.
+Make sure you are in the "src" directory.
 
 ```bash
-$ cd /tmp/eagle/work/polyploid-rna-seq-analyses/src/3_eagle
-3_eagle $ bash ../scripts/4_count.sh 
-3_eagle $
+src $ bash scripts/4_count.sh 
+src $
 ```
 
 #### 4_count.sh: [https://github.com/MoekoOkada/SummerSchool_2023/blob/main/scripts/4_count.sh](https://github.com/MoekoOkada/SummerSchool_2023/blob/main/scripts/4_count.sh)
@@ -108,7 +103,7 @@ $ cd /tmp/eagle/work/polyploid-rna-seq-analyses/src/3_eagle
 ## 5. Make expression table
 
 ```bash
-3_eagle $ cd ../4_count
+src $ cd 4_count
 4_count $ pwd
 /tmp/eagle/work/polyploid-rna-seq-analyses/src/4_count
 4_count $ (echo "gene_id";ls *_hal_counts.txt; ) | sed -e s/_hal_counts.txt//g | tr '\n' '_hal\t' | sed 's/\s*$//' > hal_counts.tsv

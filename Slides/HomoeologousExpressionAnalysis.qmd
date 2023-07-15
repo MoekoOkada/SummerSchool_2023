@@ -23,8 +23,9 @@ format: revealjs
    1. read count
    2. make count matrix
 6. Expression analysis
-   1. Clustering
-   2. Homoeolog ratio test
+   1. Differential expression analysis
+   2. Clustering
+   3. Homoeolog ratio test
 
 :::
 
@@ -91,8 +92,9 @@ https://www.bg.s.u-tokyo.ac.jp/nikko-old/5_jokyo/species/Arabidopsis_kamchatica.
    1. read count
    2. make count matrix
 6. Expression analysis
-   1. Clustering
-   2. Homoeolog ratio test
+   1. Differential expression analysis
+   2. Clustering
+   3. Homoeolog ratio test
 
 :::
 
@@ -129,8 +131,6 @@ Error messages may appear during extraction, but just ignore them!
 
 ```bash
 $ cd src
-src $ pwd
-/tmp/eagle/work/polyploid-rna-seq-analyses/src
 src $ wget -O genome.tar.gz https://drive.switch.ch/index.php/s/ZQzcTZ5lGJEcCbA/download
 src $ ls
 genome.tar.gz  scripts
@@ -147,9 +147,6 @@ src $
 #### 1-2. Download raw sequence data
 
 ```bash
-$ cd /src
-src $ pwd
-/tmp/eagle/work/polyploid-rna-seq-analyses/src
 src $ wget -O fastq.tar.gz https://drive.switch.ch/index.php/s/0ny11xweoA5WhEX/download
 src $ ls
 fastq.tar.gz  genome  genome.tar.gz  scripts
@@ -182,7 +179,6 @@ Use shell script `1_qc.sh` to run Trimmomatics for all data.
 # Date: 4-Jul-2023
 # Author: Moeko Okada
 
-cd /tmp/eagle/work/polyploid-rna-seq-analyses/src
 mkdir 1_qc
 cd fastq/
 
@@ -201,15 +197,11 @@ done
 
 ## 2. Quality control
 
-Make sure you are in `fastq` directory.
+Make sure you are in `src` directory.
 
 ```bash
-src $ cd fastq
-fastq $ pwd
-/tmp/eagle/work/polyploid-rna-seq-analyses/src/fastq
-fastq $
-fastq $ bash ../scripts/1_qc.sh
-fastq $
+src $ bash scripts/1_qc.sh
+src $
 ```
 
 <br>
@@ -267,10 +259,8 @@ Use shell script `2_map.sh` to run Trimmomatics for all data.
 # Date: 4-Jul-2023
 # Author: Moeko Okada
 
-cd /tmp/eagle/work/polyploid-rna-seq-analyses/src
 mkdir 2_map
 cd 1_qc/
-
 
 for i in `ls *_ds_clean.fastq.gz`; do
   f=`basename ${i} _clean.fastq.gz`
@@ -287,13 +277,11 @@ done
 
 ## 3. Homoeologous Mapping
 
-Make sure you are in 1_qc directory.
+Make sure you are in `src` directory.
 
 ```shell
-fastq $ cd ../1_qc
-1_qc $ pwd tmp/eagle/work/polyploid-rna-seq-analyses/src/1_qc
-1_qc $ bash ../scripts/2_map.sh
-1_qc $
+src $ bash scripts/2_map.sh
+src $
 ```
 
 <br>
@@ -366,10 +354,8 @@ Use shell script `3_eagle.sh` to run Trimmomatics for all data.
 # Date: 4-Jul-2023
 # Author: Moeko Okada
 
-cd /tmp/eagle/work/polyploid-rna-seq-analyses/src
 mkdir 3_eagle
 cd 2_map/
-
 
 for i in `ls *_hal.bam`; do
   f=`basename ${i} _hal.bam`
@@ -383,14 +369,11 @@ done
 
 ## 4. Read sorting by EAGLE-RC
 
-Make sure you are in `2_map` directory!
+Make sure you are in `src` directory!
 
 ```bash
-1_qc $ cd ../2_map
-2_map $ pwd
-/tmp/eagle/work/polyploid-rna-seq-analyses/src/2_map
-2_map $ bash ../scripts/3_eagle.sh
-2_map $
+src $ bash scripts/3_eagle.sh
+src $
 ```
 
 ## Output file of EAGLE-RC
@@ -410,8 +393,6 @@ Make sure you are in `2_map` directory!
 To make it faster and simpler, we will use `*.eaglerc1.ref.bam` and `*.eaglerc1.alt.bam`.
 
 :::
-
-# 5. Expression analysis
 
 ## 5-1. Count mapped read
 
@@ -435,10 +416,8 @@ Use shell script `4_count.sh` to run Trimmomatics for all data.
 # Date: 4-Jul-2023
 # Author: Moeko Okada
 
-cd /tmp/eagle/work/polyploid-rna-seq-analyses/src
 mkdir 4_count
 cd 3_eagle/
-
 
 for i in `ls *.eaglerc1.ref.bam`; do
   f=`basename ${i} .eaglerc1.ref.bam`
@@ -453,13 +432,11 @@ done
 
 ## 5-1. Count mapped read
 
-Make sure you are in the "3_eagle" directory.
+Make sure you are in the "src" directory.
 
 ```bash
-3_eagle $ pwd
-/tmp/eagle/work/polyploid-rna-seq-analyses/src/3_eagle
-3_eagle $ bash ../scripts/4_count.sh
-3_eagle $
+src $ bash scripts/4_count.sh
+src $
 ```
 
 ## 5-2. Make read count matrix
@@ -481,7 +458,7 @@ For further expression analysis, prepare a count matrix looks like this.
 Make sure you are in `4_count` directory!
 
 ```bash
-3_eagle $ cd ../4_count
+src $ cd 4_count
 4_count $ pwd
 /tmp/eagle/work/polyploid-rna-seq-analyses/src/4_count
 4_count $ (echo "gene_id";ls *_hal_counts.txt; ) | sed -e s/_hal_counts.txt//g | tr '\n' '_hal\t' | sed 's/\s*$//' > hal_counts.tsv
@@ -505,8 +482,11 @@ Please move to the R console.
 
 Required package information is written in [install.R](https://github.com/MoekoOkada/SummerSchool_2023/blob/main/scripts/install.r).
 
+## 6-1. Differential Expression Analysis
 
-## Required libraries
+<br>
+
+### Required libraries
 
 ```r
 library(edgeR) # normalisation, deg detection
@@ -516,12 +496,16 @@ library(stringr) # data formatting
 library(gplots) # plot heatmap
 ```
 
-## Load data
+## 6-1. Differential Expression Analysis
+
+<br>
+
+### Load data
 
 ```r
 ## load count data
 # set working directory
-setwd("/tmp/eagle/work/polyploid-rna-seq-analyses/src/exp")
+setwd("src/exp")
 
 # load count data of halleri side
 hal_count <- read.table("hal_counts.tsv", header = T, row.names = 1, sep = "\t")
@@ -536,7 +520,11 @@ lyr_count <- read.table("lyr_counts.tsv", header = T, row.names = 1, sep = "\t")
 head(lyr_counr)
 ```
 
-## Data prep. for EAGLE-RC
+## 6-1. Differential Expression Analysis
+
+<br>
+
+### Data prep. for EAGLE-RC
 
 1. Make whole count matrix
 2. Load the gene length info of halleri
@@ -560,7 +548,11 @@ head(table_rpkm)
 write.table(table_rpkm, file = paste0("homoeolog_RPKM.txt"), col.names = T, row.names = T, sep = "\t") # Output
 ```
 
-## make count matrix for each condition (control and zinc) for expression analysis
+## 6-1. Differential Expression Analysis
+
+<br>
+
+### make count matrix for each condition (control and zinc) for expression analysis
 
 ```R
 # select function in dplyr package
@@ -570,7 +562,11 @@ zinc <- select(count, contains("48h")) # Select columns with "48h"
 head(zinc)
 ```
 
-## Expression analysis
+## 6-1. Differential Expression Analysis
+
+<br>
+
+### Expression analysis
 
 Use edgeR to compare halleri side and kamchatica side under zinc treatment.
 
@@ -590,11 +586,13 @@ d1 <- estimateDisp(d1, design)
 plotMDS(d1)
 ```
 
-## MSD plot
+## 6-1. Differential Expression Analysis
+
+### MSD plot
 
 ![](./photos/mds.png)
 
-## Heatmap of metal-related gene
+## 6-2. Clustering and heatmap
 
 First, format data to draw heatmap.
 
@@ -608,9 +606,11 @@ scaledata <- scaledata[complete.cases(scaledata), ]
 rownames(scaledata) <- lapply(rownames(scaledata), gsub, pattern = ".t1", replacement = "")
 ```
 
-## Heatmap of metal-related gene
+## 6-2. Clustering and heatmap
 
-Extract metal-related gene from expression table.
+<br>
+
+### Extract metal-related gene from expression table.
 
 ```R
 # make a gene set
@@ -621,9 +621,11 @@ metal_genes[, 4]
 my.geneset <- scaledata[rownames(scaledata) %in% metal_genes[, 4], ]
 ```
 
-## Heatmap of metal-related gene
+## 6-2. Clustering and heatmap
 
-Hierarchical clustering
+<br>
+
+### Hierarchical clustering
 
 ```R
 # clustering
@@ -631,7 +633,9 @@ hr <- hclust(as.dist(1 - cor(t(my.geneset), method = "pearson")), method = "comp
 hc <- hclust(as.dist(1 - cor(my.geneset, method = "spearman")), method = "complete")
 ```
 
-## Heatmap of metal-related gene
+## 6-2. Clustering and heatmap
+
+<br>
 
 Plot heatmap based on the clustering information.
 
@@ -652,15 +656,29 @@ heatmap.2(my.geneset,
 dev.off()
 ```
 
+## 6-2. Clustering and heatmap
+
+<br>
+
+### Heatmap
+
+![](./photos/Cluster_hm_zinc.png)
+
 ## Advanced Excercise 1
+
+<br>
 
 How about the expression patterns of metal-related genes in control samples?
 
 ## Advanced Excercise 2
 
+<br>
+
 Compare expression between control and zinc condition.
 
-## Homoeologous Ratio Test
+## 6-3. Homoeologous Ratio Test
+
+<br>
 
 - Calculate expression ratio using R script provided by "HomeoRoq"
 - Required files
@@ -674,4 +692,62 @@ Compare expression between control and zinc condition.
 
 :::
 
-##
+## 6-3. Homoeologous Ratio Test
+
+<br>
+
+### label.txt
+
+```t
+"MUR_1_hal","MUR_1_lyr","MUR_R48h_1_hal","MUR_R48h_1_lyr"
+"MUR_2_hal","MUR_2_lyr","MUR_R48h_2_hal","MUR_R48h_2_lyr"
+"MUR_3_hal","MUR_3_lyr","MUR_R48h_3_hal","MUR_R48h_3_lyr"
+```
+
+## 6-3. Homoeologous Ratio Test
+
+!! Go back to terminal!
+
+![](./photos/start.png)
+
+## 6-3. Homoeologous Ratio Test
+
+<br>
+
+### Make sure you are in `scripts` directory.
+
+```bash
+$ cd src/scripts
+scripts $ R --vanilla --slave --args ../exp/pval.txt ../exp/homoeolog_RPKM.txt label.txt < calcpval_one.R
+```
+
+## 6-3. Homoeologous Ratio Test
+
+<br>
+
+### Make sure you are in `scripts` directory.
+
+```bash
+$ cd src/scripts
+scripts $ R --vanilla --slave --args ../exp/pval.txt ../exp/homoeolog_RPKM.txt label.txt < calcpval_one.R
+```
+
+<br>
+
+This process takes a while... How about coffee break?
+
+## 6-3. Homoeologous Ratio Test
+
+<br>
+
+### Plot homoeolog ratio
+
+Make sure you are in `exp` directory!
+
+```bash
+scripts $ cd ../exp
+exp $ pwd
+/tmp/eagle/work/polyploid-rna-seq-analyses/src/exp
+exp $ Rscript ../scripts/plot_homeoroq.R homoeolog_RPKM.txt pval_mean.xls MUR MUR_R48h
+exp $
+```
