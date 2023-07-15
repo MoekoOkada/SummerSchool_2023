@@ -6,6 +6,7 @@
 # For example, remove the comment from the line below if you wish to
 # install the `ggplot2` package.
 #
+# install.packages('ggplot2')
 
 if (!require("BiocManager", quietly = TRUE)) {
   install.packages("BiocManager")
@@ -13,13 +14,11 @@ if (!require("BiocManager", quietly = TRUE)) {
 
 cranPackages <- c(
   "tidyverse",
-  "plotly",
-  "pheatmap",
-  "patchwork",
-  "Seurat",
   "dplyr",
+  "stringr",
   "locfit",
-  "doMC"
+  "doMC",
+  "gplot"
 )
 install.packages(cranPackages)
 

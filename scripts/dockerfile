@@ -1,0 +1,93 @@
+########################################################
+#        Renku install section - do not edit           #
+
+FROM renku/renkulab-r:4.2.0-0.17.0 as builder
+
+# RENKU_VERSION determines the version of the renku CLI
+# that will be used in this image. To find the latest version,
+# visit https://pypi.org/project/renku/#history.
+ARG RENKU_VERSION=2.5.0
+
+# Install renku from pypi or from github if a dev version
+RUN if [ -n "$RENKU_VERSION" ] ; then \
+  source .renku/venv/bin/activate ; \
+  currentversion=$(renku --version) ; \
+  if [ "$RENKU_VERSION" != "$currentversion" ] ; then \
+  pip uninstall renku -y ; \
+  gitversion=$(echo "$RENKU_VERSION" | sed -n "s/^[[:digit:]]\+\.[[:digit:]]\+\.[[:digit:]]\+\(rc[[:digit:]]\+\)*\(\.dev[[:digit:]]\+\)*\(+g\([a-f0-9]\+\)\)*\(+dirty\)*$/\4/p") ; \
+  if [ -n "$gitversion" ] ; then \
+  pip install --no-cache-dir --force "git+https://github.com/SwissDataScienceCenter/renku-python.git@$gitversion" ;\
+  else \
+  pip install --no-cache-dir --force renku==${RENKU_VERSION} ;\
+  fi \
+  fi \
+  fi
+#             End Renku install section                #
+########################################################
+
+FROM renku/renkulab-r:4.2.0-0.17.0
+
+# Uncomment and adapt if code is to be included in the image
+# COPY src /code/src
+
+# Uncomment and adapt if your R or python packages require extra linux (ubuntu) software
+# e.g. the following installs apt-utils and vim; each pkg on its own line, all lines
+# except for the last end with backslash '\' to continue the RUN line
+#
+USER root
+RUN apt-get update && \
+  apt-get install -y --no-install-recommends \
+  apt-utils \
+  vim \
+  sudo
+# USER ${NB_USER}
+
+## add root user
+ARG DOCKER_USER=polyploid
+ARG DOCKER_PASSWORD=polyploid
+
+RUN useradd ${DOCKER_USER}
+RUN usermod -aG sudo ${DOCKER_USER}
+RUN echo ${DOCKER_USER}:${DOCKER_PASSWORD} | chpasswd
+
+## if necessary
+RUN su - ${DOCKER_USER}
+
+# install the R dependencies
+COPY install.R /tmp/
+RUN R -f /tmp/install.R
+
+# install conda
+# RUN wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
+# RUN bash Miniconda3-latest-Linux-x86_64.sh -b
+
+# create conda environment
+# RUN /root/miniconda3/bin/conda create --name eaglerc
+# SHELL ["/root/miniconda3/bin/conda", "run", "-n", "eaglerc", "/usr/bin/bash", "-c"]
+
+# install conda dependencies
+# RUN /root/miniconda3/bin/conda config --add channels bioconda
+RUN conda config --add channels bioconda
+# RUN /root/miniconda3/bin/conda config --add channels conda-forge
+RUN conda config --add channels conda-forge
+# RUN /root/miniconda3/bin/conda install -y -c bioconda gffread star last hisat2 trimmomatic
+RUN conda install -y -c bioconda star hisat2 trimmomatic subread
+# RUN /root/miniconda3/bin/conda install -y -c bioconda samtools==1.17
+RUN conda install -y -c bioconda samtools==1.17
+
+# EAGLE-RC
+# https://github.com/tony-kuo/eagle
+
+# USER ${DOCKER_USER}
+
+WORKDIR /tmp
+RUN git clone https://github.com/tony-kuo/eagle.git
+WORKDIR /tmp/eagle
+RUN git clone https://github.com/samtools/htslib.git
+WORKDIR /tmp/eagle/htslib
+RUN git submodule update --init --recursive
+WORKDIR /tmp/eagle
+RUN make
+
+RUN mv /tmp/eagle/eagle /usr/local/bin/
+RUN mv /tmp/eagle/eagle-rc /usr/local/bin/
