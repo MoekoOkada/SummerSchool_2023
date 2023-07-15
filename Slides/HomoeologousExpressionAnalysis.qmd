@@ -8,7 +8,7 @@ format: revealjs
 
 [https://github.com/MoekoOkada/SummerSchool_2023](https://github.com/MoekoOkada/SummerSchool_2023)
 
-! When you copy the scripts, please copy from GitHub page, not from this html files!
+! When you copy the scripts, please copy from the GitHub page, not from this HTML file!
 
 
 ## Today's Plan
@@ -21,7 +21,7 @@ format: revealjs
 4. Read sorting by EAGLE-RC
 5. Read count
    1. read count
-   2. make count matrix
+   2. make a count matrix
 6. Expression analysis
    1. Differential expression analysis
    2. Clustering
@@ -29,7 +29,7 @@ format: revealjs
 
 :::
 
-## RNA-seq warkflow review
+## RNA-seq workflow review
 
 - Sequencing
 - Quality control
@@ -44,7 +44,7 @@ format: revealjs
 
 ![KK Shimizu (2022) Curr. Opin. Plant Biol. ](./photos/HomoeologousExpression.jpeg)
 
-## RNA-seq warkflow review
+## RNA-seq workflow review
 
 - Sequencing
 - Quality control
@@ -90,7 +90,7 @@ https://www.bg.s.u-tokyo.ac.jp/nikko-old/5_jokyo/species/Arabidopsis_kamchatica.
 4. Read sorting by EAGLE-RC
 5. Read count
    1. read count
-   2. make count matrix
+   2. make a count matrix
 6. Expression analysis
    1. Differential expression analysis
    2. Clustering
@@ -106,7 +106,7 @@ https://www.bg.s.u-tokyo.ac.jp/nikko-old/5_jokyo/species/Arabidopsis_kamchatica.
   - If you want to copy and paste, exclude `$`.
 
 
-- I put the name of directory you should be before `$`.
+- I put the name of the directory you should be before `$`.
   - If you are not there, please run the `cd` command
 
 
@@ -164,7 +164,7 @@ src $
 Trimmomatic ([Bolger et al. _Bioinformatics_ 2014.](https://academic.oup.com/bioinformatics/article/30/15/2114/2390096>))
 
 - Remove sequencer-specific adapter sequence
-- Remove low quality reads (Q < 30)
+- Remove low-quality reads (Q < 30)
 - Remove too short reads (< 40)
 - Use only reads passed the criteria
 
@@ -197,7 +197,7 @@ done
 
 ## 2. Quality control
 
-Make sure you are in `src` directory.
+Make sure you are in the `src` directory.
 
 ```bash
 src $ bash scripts/1_qc.sh
@@ -227,7 +227,7 @@ For read classification by EAGLE-RC, reads should be mapped to each subgenome re
 Kuo et al. _Brief. Bioinfom_ 2020
 :::
 
-## Mapping softwares
+## Mapping software
 
 :::{style="font-size:0.7em"}
 
@@ -238,7 +238,7 @@ Kuo et al. _Brief. Bioinfom_ 2020
 
 STAR is recommended to EAGLE-RC.
 
-But today we will use HISAT2 because of the time and resource limitation.
+But today we will use HISAT2 because of the time and resource limitations.
 
 <br>
 
@@ -277,7 +277,7 @@ done
 
 ## 3. Homoeologous Mapping
 
-Make sure you are in `src` directory.
+Make sure you are in the `src` directory.
 
 ```shell
 src $ bash scripts/2_map.sh
@@ -328,12 +328,12 @@ Today, we will use NGI mode.
 
 Please take a look [github page](https://github.com/tony-kuo/eagle) for
 
-- creating homoeologous list
+- creating a homoeologous list
 - how to run normal mode
 - how to use eagle-rc for genotyping from DNA-seq data
 - etc...
 
-You maybe required to install some softwares.
+You may be required to install some software.
 
 :::
 
@@ -369,7 +369,7 @@ done
 
 ## 4. Read sorting by EAGLE-RC
 
-Make sure you are in `src` directory!
+Make sure you are in the `src` directory!
 
 ```bash
 src $ bash scripts/3_eagle.sh
@@ -380,8 +380,8 @@ src $
 
 :::{style="font-size:0.8em"}
 
-- *.ref.bam: reads with reference allele
-- *.alt.bam: reads with alternative allele
+- *.ref.bam: reads with the reference allele
+- *.alt.bam: reads with the alternative allele
 - *.unk.bam: ambiguous reads
 - *.mul.bam: multi-allele reads (empty when we use NGI mode)
 
@@ -441,7 +441,7 @@ src $
 
 ## 5-2. Make read count matrix
 
-For further expression analysis, prepare a count matrix looks like this.
+For further expression analysis, prepare a count matrix that looks like this.
 
 :::{style="font-size:0.8em"}
 
@@ -455,12 +455,10 @@ For further expression analysis, prepare a count matrix looks like this.
 
 ## 5-2. Make Expression table
 
-Make sure you are in `4_count` directory!
+Make sure you are in the `4_count` directory!
 
 ```bash
 src $ cd 4_count
-4_count $ pwd
-/tmp/eagle/work/polyploid-rna-seq-analyses/src/4_count
 4_count $ (echo "gene_id";ls *_hal_counts.txt; ) | sed -e s/_hal_counts.txt//g | tr '\n' '_hal\t' | sed 's/\s*$//' > hal_counts.tsv
 4_count $ (echo "gene_id";ls *_lyr_counts.txt; ) | sed -e s/_ds_lyr_counts.txt//g | tr '\n' '_lyr\t' | sed 's/\s*$//' > lyr_counts.tsv
 4_count $ echo "" >> hal_counts.tsv
@@ -474,9 +472,11 @@ src $ cd 4_count
 
 ## 6. Expression analysis
 
-Use R for calculation nad visualization.
+Use R for calculation and visualization.
 
 Please move to the R console.
+
+![](./photos/console.png)
 
 <br>
 
@@ -526,9 +526,11 @@ head(lyr_counr)
 
 ### Data prep. for EAGLE-RC
 
-1. Make whole count matrix
+1. Make a whole count matrix
 2. Load the gene length info of halleri
 3. calculate RPKM using DESeq2
+
+## Data prep. for EAGLE-RC
 
 ```R
 # bind count data
@@ -539,7 +541,7 @@ head(count)
 # load gene length of hal
 Ahal_gtf <- read.table("../genome/Ahal_v2_2.gtf", header = F, sep = "\t")
 Ahal_gtf <- filter(Ahal_gtf, V3 == "transcript") # extract transcript information
-len <- Ahal_gtf$V5 - Ahal_gtf$V4 + 1 # define length based on start and end position of each genes
+len <- Ahal_gtf$V5 - Ahal_gtf$V4 + 1 # define length based on start and end position of each gene
 
 # Calculate RPKM
 rpkm <- as.data.frame(rpkm(count, len, log = FALSE)) # rpkm function in DESeq2 package
@@ -552,10 +554,12 @@ write.table(table_rpkm, file = paste0("homoeolog_RPKM.txt"), col.names = T, row.
 
 <br>
 
-### make count matrix for each condition (control and zinc) for expression analysis
+Make a count matrix for each condition (control and zinc) for expression analysis
+
+<br>
 
 ```R
-# select function in dplyr package
+# Select function in dplyr package
 control <- select(count, -contains("48h")) # Select columns without "48h"
 head(control)
 zinc <- select(count, contains("48h")) # Select columns with "48h"
@@ -563,8 +567,6 @@ head(zinc)
 ```
 
 ## 6-1. Differential Expression Analysis
-
-<br>
 
 ### Expression analysis
 
@@ -575,7 +577,7 @@ Use edgeR to compare halleri side and kamchatica side under zinc treatment.
 group <- factor(c("kam_hal", "kam_hal", "kam_hal", "kam_lyr", "kam_lyr", "kam_lyr"))
 design <- model.matrix(~group)
 
-# DEG detection from zinc treated samples
+# DEG detection from zinc-treated samples
 d1 <- DGEList(counts = zinc, group = group)
 
 # normalize according to UserGuide
@@ -594,7 +596,7 @@ plotMDS(d1)
 
 ## 6-2. Clustering and heatmap
 
-First, format data to draw heatmap.
+First, format data to draw a heatmap.
 
 ```R
 # calculate cpm and format it for heatmap
@@ -610,7 +612,7 @@ rownames(scaledata) <- lapply(rownames(scaledata), gsub, pattern = ".t1", replac
 
 <br>
 
-### Extract metal-related gene from expression table.
+### Extract metal-related genes from the expression table.
 
 ```R
 # make a gene set
@@ -639,10 +641,10 @@ hc <- hclust(as.dist(1 - cor(my.geneset, method = "spearman")), method = "comple
 
 Plot heatmap based on the clustering information.
 
-Use `heatmap.2` function in `gplot` package.
+Use the `heatmap.2` function in the `gplot` package.
 
 ```R
-# Clustering of metal related genes
+# Clustering of metal-related genes
 png(paste0("Cluster_hm_zinc.png"))
 heatmap.2(my.geneset,
   Rowv = as.dendrogram(hr),
@@ -714,7 +716,7 @@ Compare expression between control and zinc condition.
 
 <br>
 
-### Make sure you are in `scripts` directory.
+### Make sure you are in the `scripts` directory.
 
 ```bash
 $ cd src/scripts
@@ -725,7 +727,7 @@ scripts $ R --vanilla --slave --args ../exp/pval.txt ../exp/homoeolog_RPKM.txt l
 
 <br>
 
-### Make sure you are in `scripts` directory.
+### Make sure you are in the `scripts` directory.
 
 ```bash
 $ cd src/scripts
@@ -734,7 +736,7 @@ scripts $ R --vanilla --slave --args ../exp/pval.txt ../exp/homoeolog_RPKM.txt l
 
 <br>
 
-This process takes a while... How about coffee break?
+This process takes a while... How about a coffee break?
 
 ## 6-3. Homoeologous Ratio Test
 
@@ -742,12 +744,29 @@ This process takes a while... How about coffee break?
 
 ### Plot homoeolog ratio
 
-Make sure you are in `exp` directory!
+Make sure you are in the `exp` directory!
 
 ```bash
 scripts $ cd ../exp
-exp $ pwd
-/tmp/eagle/work/polyploid-rna-seq-analyses/src/exp
-exp $ Rscript ../scripts/plot_homeoroq.R homoeolog_RPKM.txt pval_mean.xls MUR MUR_R48h
+exp $ Rscript ../scripts/plot_homeoroq.R pval.txt MUR MUR_R48h
 exp $
 ```
+
+## 6-3. Homoeologous Ratio Test
+
+<br>
+
+### Plot homoeolog ratio
+
+Make sure you are in the `exp` directory!
+
+```bash
+scripts $ cd ../exp
+exp $ Rscript ../scripts/plot_homeoroq.R pval.txt MUR MUR_R48h
+exp $
+```
+
+Now you got two pdf files.
+
+- ratio_overdispersion: Scatterplot of the ratio of homeolog expression level between two conditions
+- hist_overdispersion: Histogram of expression ratio

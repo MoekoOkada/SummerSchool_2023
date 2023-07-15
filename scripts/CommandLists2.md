@@ -31,7 +31,7 @@ src $
 
 ## 6. Expression analysis
 
-Use R for calculation nad visualization.
+Use R for calculation and visualization.
 
 Please move to the R console.
 
@@ -72,7 +72,7 @@ head(lyr_counr)
 
 ### Data prep. for EAGLE-RC
 
-1. Make whole count matrix
+1. Make a whole count matrix
 2. Load the gene length info of halleri
 3. calculate RPKM using DESeq2
 
@@ -85,7 +85,7 @@ head(count)
 # load gene length of hal
 Ahal_gtf <- read.table("../genome/Ahal_v2_2.gtf", header = F, sep = "\t")
 Ahal_gtf <- filter(Ahal_gtf, V3 == "transcript") # extract transcript information
-len <- Ahal_gtf$V5 - Ahal_gtf$V4 + 1 # define length based on start and end position of each genes
+len <- Ahal_gtf$V5 - Ahal_gtf$V4 + 1 # define length based on start and end position of each gene
 
 # Calculate RPKM
 rpkm <- as.data.frame(rpkm(count, len, log = FALSE)) # rpkm function in DESeq2 package
@@ -94,17 +94,17 @@ head(table_rpkm)
 write.table(table_rpkm, file = paste0("homoeolog_RPKM.txt"), col.names = T, row.names = T, sep = "\t") # Output
 ```
 
-### make count matrix for each condition (control and zinc) for expression analysis
+### Make a count matrix for each condition (control and zinc) for expression analysis
 
 ```R
-# select function in dplyr package
+# Select function in dplyr package
 control <- select(count, -contains("48h")) # Select columns without "48h"
 head(control)
 zinc <- select(count, contains("48h")) # Select columns with "48h"
 head(zinc)
 ```
 
-### Expression analysis: two group comparison
+### Expression analysis: two-group comparison
 
 Use edgeR to compare halleri side and kamchatica side under zinc treatment.
 
@@ -113,7 +113,7 @@ Use edgeR to compare halleri side and kamchatica side under zinc treatment.
 group <- factor(c("kam_hal", "kam_hal", "kam_hal", "kam_lyr", "kam_lyr", "kam_lyr"))
 design <- model.matrix(~group)
 
-# DEG detection from zinc treated samples
+# DEG detection from zinc-treated samples
 d1 <- DGEList(counts = zinc, group = group)
 
 # normalize according to UserGuide
@@ -126,7 +126,7 @@ plotMDS(d1)
 
 ### Heatmap of metal-related gene
 
-First, format data to draw heatmap.
+First, format data to draw a heatmap.
 
 ```R
 # calculate cpm and format it for heatmap
@@ -140,7 +140,7 @@ rownames(scaledata) <- lapply(rownames(scaledata), gsub, pattern = ".t1", replac
 
 ### Heatmap of metal-related gene
 
-Extract metal-related gene from expression table.
+Extract metal-related genes from the expression table.
 
 ```R
 # make a gene set
@@ -168,7 +168,7 @@ Plot heatmap based on the clustering information.
 Use `heatmap.2` function in `gplot` package.
 
 ```R
-# Clustering of metal related genes
+# Clustering of metal-related genes
 png(paste0("Cluster_hm_zinc.png"))
 heatmap.2(my.geneset,
   Rowv = as.dendrogram(hr),
@@ -184,9 +184,20 @@ dev.off()
 
 ## Homoeologous ratio test
 
-### Make sure you are in `scripts` directory.
+### Make sure you are in the `scripts` directory.
 
 ```bash
-$ cd src/scripts
+src $ cd scripts
 scripts $ R --vanilla --slave --args ../exp/pval.txt ../exp/homoeolog_RPKM.txt label.txt < calcpval_one.R
+```
+
+It takes maybe 30-40 min...
+
+## Homoeologous ratio test
+
+### Plot differentially expressed homoeologs
+
+```bash
+scripts $ Rscript plot_homeoroq.R pval.txt MUR MUR_48h
+scripts $
 ```

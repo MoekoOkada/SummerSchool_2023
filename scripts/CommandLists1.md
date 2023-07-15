@@ -3,7 +3,7 @@
 Date: 17-Jul-2023  
 Author: Moeko Okada  
 
-List of commands used in the polyploidy summer school for lectureres.  
+List of commands used in the polyploidy summer school.  
 
 ## Part 1
 
@@ -13,7 +13,7 @@ List of commands used in the polyploidy summer school for lectureres.
 4. Read sorting by EAGLE-RC
 5. Read count
    1. read count
-   2. make count matrix
+   2. make a count matrix
 
 ## 0. Data download
 
@@ -30,7 +30,7 @@ genome  genome.tar.gz  scripts
 src $
 ```
 
-### downsampled read data
+### Downsampled read data
 
 ```bash
 src $ wget -O fastq.tar.gz https://drive.switch.ch/index.php/s/0ny11xweoA5WhEX/download
@@ -47,7 +47,7 @@ src $
 
 ## 1. Quality control
 
-Use shell script to run all samples.  
+Use a shell script to run all samples.  
 Make sure you are in the "src" directory.
 
 ```bash
@@ -59,7 +59,7 @@ src $
 
 ## 2. Mapping
 
-Use shell script to run all samples.  
+Use a shell script to run all samples.  
 Make sure you are in the "src" directory.
 
 ```bash
@@ -74,7 +74,7 @@ src $
 
 Use EAGLE-RC software to classify reads.
 
-Use shell script to run all samples.  
+Use a shell script to run all samples.  
 Make sure you are in the "src" directory.
 
 ```bash
@@ -89,7 +89,7 @@ src $
 
 Count the number of reads using featureCounts software.
 
-Use shell script to run all samples.  
+Use a shell script to run all samples.  
 Make sure you are in the "src" directory.
 
 ```bash
@@ -104,8 +104,6 @@ src $
 
 ```bash
 src $ cd 4_count
-4_count $ pwd
-/tmp/eagle/work/polyploid-rna-seq-analyses/src/4_count
 4_count $ (echo "gene_id";ls *_hal_counts.txt; ) | sed -e s/_hal_counts.txt//g | tr '\n' '_hal\t' | sed 's/\s*$//' > hal_counts.tsv
 4_count $ (echo "gene_id";ls *_lyr_counts.txt; ) | sed -e s/_ds_lyr_counts.txt//g | tr '\n' '_lyr\t' | sed 's/\s*$//' > lyr_counts.tsv
 4_count $ echo "" >> hal_counts.tsv

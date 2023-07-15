@@ -7,6 +7,8 @@ cat("Loading\n") ##
 args <- commandArgs(trailingOnly = T)
 outfile <- args[1]
 rawcount <- read.delim(args[2], header = T)
+gene <- as.character(rawcount$gene)
+rawcount <- rawcount[, -13]
 head(rawcount)
 mylabel <- read.table(args[3], header = F, stringsAsFactors = F, sep = ",")
 head(mylabel)
@@ -95,7 +97,7 @@ pvalListList <- foreach(i = 1:repeatnum) %dopar% { # length(sampleList)
   sigChangeMH(firstnum:termnum, numSample = 10000, verbose = FALSE)
 }
 pvalList <- unlist(pvalListList)
-gene <- as.character(rawcount[sampleList, "gene"])
+# gene <- as.character(rawcount[sampleList, "gene"])
 ctrlFstCounts <- rowSums(rawcount[sampleList, OCcolumns])
 ctrlSndCounts <- rowSums(rawcount[sampleList, ACcolumns])
 objFstCounts <- rowSums(rawcount[sampleList, ODcolumns])
