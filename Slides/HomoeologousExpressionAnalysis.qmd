@@ -4,6 +4,13 @@ author: Moeko Okada
 format: revealjs
 ---
 
+## Commands/ scripts are available on GitHub
+
+[https://github.com/MoekoOkada/SummerSchool_2023](https://github.com/MoekoOkada/SummerSchool_2023)
+
+! When you copy the scripts, please copy from GitHub page, not from this html files!
+
+
 ## Today's Plan
 
 ::: {style="font-size: 0.8em"}
@@ -18,7 +25,6 @@ format: revealjs
 6. Expression analysis
    1. Clustering
    2. Homoeolog ratio test
-   3. GO enrichment analysis (if we have time...)
 
 :::
 
@@ -49,6 +55,12 @@ format: revealjs
   - Functional Analyses
   - etc...
 
+## What you need to use EAGLE-RC
+
+- Reference genome sequence
+- NGS reads (DNA-seq, RNA-seq, methylome)
+- Gene annotation file (gtf, gff)
+
 ## Today's sample
 
 ***Arabidopsis kamchatica***
@@ -75,10 +87,12 @@ https://www.bg.s.u-tokyo.ac.jp/nikko-old/5_jokyo/species/Arabidopsis_kamchatica.
 2. Quality control
 3. Homoeologous Mapping
 4. Read sorting by EAGLE-RC
-5. Expression analysis
-6. Clustering
-7. Homoeolog ratio test
-8. GO enrichment analysis (if we have time...)
+5. Read count
+   1. read count
+   2. make count matrix
+6. Expression analysis
+   1. Clustering
+   2. Homoeolog ratio test
 
 :::
 
@@ -107,7 +121,11 @@ src $
 
 ## 1. Data download
 
-1-1. Download genome data
+Error messages may appear during extraction, but just ignore them!
+
+<br>
+
+#### 1-1. Download genome data
 
 ```bash
 $ cd src
@@ -122,9 +140,11 @@ genome  genome.tar.gz  scripts
 src $
 ```
 
-## Data download
+## 1. Data download
 
-1-2. Download raw sequence data
+<br>
+
+#### 1-2. Download raw sequence data
 
 ```bash
 $ cd /src
@@ -477,16 +497,181 @@ Make sure you are in `4_count` directory!
 
 ## 6. Expression analysis
 
+Use R for calculation nad visualization.
 
-- Expression analysis
-- Clustering
-- Homoeolog ratio test
+Please move to the R console.
 
+<br>
+
+Required package information is written in [install.R](https://github.com/MoekoOkada/SummerSchool_2023/blob/main/scripts/install.r).
+
+
+## Required libraries
+
+```r
+library(edgeR) # normalisation, deg detection
+library(DESeq2) # normalisation, deg detection
+library(dplyr) # data formatting
+library(stringr) # data formatting
+library(gplots) # plot heatmap
+```
+
+## Load data
+
+```r
+## load count data
+# set working directory
+setwd("/tmp/eagle/work/polyploid-rna-seq-analyses/src/exp")
+
+# load count data of halleri side
+hal_count <- read.table("hal_counts.tsv", header = T, row.names = 1, sep = "\t")
+
+# check hal count data
+head(hal_count)
+
+# load count data of lyrata side
+lyr_count <- read.table("lyr_counts.tsv", header = T, row.names = 1, sep = "\t")
+
+# check lyr count data
+head(lyr_counr)
+```
+
+## Data prep. for EAGLE-RC
+
+1. Make whole count matrix
+2. Load the gene length info of halleri
+3. calculate RPKM using DESeq2
+
+```R
+# bind count data
+count <- cbind(hal_count, lyr_count) # cbind merges the two data frame based on rownames
+# check data
+head(count)
+
+# load gene length of hal
+Ahal_gtf <- read.table("../genome/Ahal_v2_2.gtf", header = F, sep = "\t")
+Ahal_gtf <- filter(Ahal_gtf, V3 == "transcript") # extract transcript information
+len <- Ahal_gtf$V5 - Ahal_gtf$V4 + 1 # define length based on start and end position of each genes
+
+# Calculate RPKM
+rpkm <- as.data.frame(rpkm(count, len, log = FALSE)) # rpkm function in DESeq2 package
+table_rpkm <- as.data.frame(rpkm, n = nrow(count)) # convert to table
+head(table_rpkm)
+write.table(table_rpkm, file = paste0("homoeolog_RPKM.txt"), col.names = T, row.names = T, sep = "\t") # Output
+```
+
+## make count matrix for each condition (control and zinc) for expression analysis
+
+```R
+# select function in dplyr package
+control <- select(count, -contains("48h")) # Select columns without "48h"
+head(control)
+zinc <- select(count, contains("48h")) # Select columns with "48h"
+head(zinc)
+```
+
+## Expression analysis
+
+Use edgeR to compare halleri side and kamchatica side under zinc treatment.
+
+```R
+# set groups
+group <- factor(c("kam_hal", "kam_hal", "kam_hal", "kam_lyr", "kam_lyr", "kam_lyr"))
+design <- model.matrix(~group)
+
+# DEG detection from zinc treated samples
+d1 <- DGEList(counts = zinc, group = group)
+
+# normalize according to UserGuide
+d1 <- calcNormFactors(d1)
+d1 <- estimateDisp(d1, design)
+
+# plot Multi-dimensional scaling
+plotMDS(d1)
+```
+
+## MSD plot
+
+![](./photos/mds.png)
+
+## Heatmap of metal-related gene
+
+First, format data to draw heatmap.
+
+```R
+# calculate cpm and format it for heatmap
+d2 <- cpm(d1, normalized.lib.size = TRUE)
+scaledata <- t(scale(t(d2))) # Centers and scales data.
+scaledata <- scaledata[complete.cases(scaledata), ]
+
+# Change ids
+rownames(scaledata) <- lapply(rownames(scaledata), gsub, pattern = ".t1", replacement = "")
+```
+
+## Heatmap of metal-related gene
+
+Extract metal-related gene from expression table.
+
+```R
+# make a gene set
+metal_genes <- read.table("metal_genes_ids.txt", sep = "\t", header = T)
+metal_genes[, 4]
+
+# Extract metal genes from deg files
+my.geneset <- scaledata[rownames(scaledata) %in% metal_genes[, 4], ]
+```
+
+## Heatmap of metal-related gene
+
+Hierarchical clustering
+
+```R
+# clustering
+hr <- hclust(as.dist(1 - cor(t(my.geneset), method = "pearson")), method = "complete")
+hc <- hclust(as.dist(1 - cor(my.geneset, method = "spearman")), method = "complete")
+```
+
+## Heatmap of metal-related gene
+
+Plot heatmap based on the clustering information.
+
+Use `heatmap.2` function in `gplot` package.
+
+```R
+# Clustering of metal related genes
+png(paste0("Cluster_hm_zinc.png"))
+heatmap.2(my.geneset,
+  Rowv = as.dendrogram(hr),
+  Colv = as.dendrogram(hc),
+  col = colorRampPalette(c("blue", "yellow"))(100),
+  scale = "row",
+  cexCol = 0.7,
+  main = "Heatmap.2",
+  trace = "none"
+)
+dev.off()
+```
 
 ## Advanced Excercise 1
 
-How about the zinc treated samples?
+How about the expression patterns of metal-related genes in control samples?
 
 ## Advanced Excercise 2
 
-Compare expression between control and zin condition.
+Compare expression between control and zinc condition.
+
+## Homoeologous Ratio Test
+
+- Calculate expression ratio using R script provided by "HomeoRoq"
+- Required files
+  - RPKM matrix
+  - label info
+  - three R scripts
+
+:::aside
+
+[Akama et al. _Nucleic Acids Research_ 2014](https://academic.oup.com/nar/article/42/6/e46/2437554)
+
+:::
+
+##

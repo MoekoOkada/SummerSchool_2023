@@ -2,8 +2,7 @@ library(edgeR)
 library(DESeq2)
 library(dplyr)
 library(stringr)
-library(cummeRbund)
-library(gplot)
+library(gplots)
 
 # load count data
 setwd("/tmp/eagle/work/polyploid-rna-seq-analyses/src/exp")
@@ -17,7 +16,7 @@ head(count)
 # load gene length of hal
 Ahal_gtf <- read.table("../genome/Ahal_v2_2.gtf", header = F, sep = "\t")
 Ahal_gtf <- filter(Ahal_gtf, V3 == "transcript")
-len <- Ahal_gtf$V5 - Ahal_gtf$V4
+len <- Ahal_gtf$V5 - Ahal_gtf$V4 + 1
 
 # Calculate RPKM
 rpkm <- as.data.frame(rpkm(count, len, log = FALSE))
@@ -65,7 +64,7 @@ hr <- hclust(as.dist(1 - cor(t(my.geneset), method = "pearson")), method = "comp
 hc <- hclust(as.dist(1 - cor(my.geneset, method = "spearman")), method = "complete")
 
 # Clustering of metal related genes
-png(paste0("Cluster_hm_zinc.png"))
+png("Cluster_hm_zinc.png")
 heatmap.2(my.geneset,
   Rowv = as.dendrogram(hr),
   Colv = as.dendrogram(hc),

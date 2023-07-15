@@ -401,6 +401,11 @@ Moeko Okada
 </div>
 
 </section>
+<section id="commands-scripts-are-available-on-github" class="slide level2">
+<h2>Commands/ scripts are available on GitHub</h2>
+<p><a href="https://github.com/MoekoOkada/SummerSchool_2023">https://github.com/MoekoOkada/SummerSchool_2023</a></p>
+<p>! When you copy the scripts, please copy from GitHub page, not from this html files!</p>
+</section>
 <section id="todays-plan" class="slide level2">
 <h2>Today’s Plan</h2>
 <div style="font-size: 0.8em">
@@ -418,7 +423,6 @@ Moeko Okada
 <ol type="1">
 <li>Clustering</li>
 <li>Homoeolog ratio test</li>
-<li>GO enrichment analysis (if we have time…)</li>
 </ol></li>
 </ol>
 </div>
@@ -458,6 +462,14 @@ Moeko Okada
 </ul></li>
 </ul>
 </section>
+<section id="what-you-need-to-use-eagle-rc" class="slide level2">
+<h2>What you need to use EAGLE-RC</h2>
+<ul>
+<li>Reference genome sequence</li>
+<li>NGS reads (DNA-seq, RNA-seq, methylome)</li>
+<li>Gene annotation file (gtf, gff)</li>
+</ul>
+</section>
 <section id="todays-sample" class="slide level2">
 <h2>Today’s sample</h2>
 <p><strong><em>Arabidopsis kamchatica</em></strong></p>
@@ -481,10 +493,16 @@ Moeko Okada
 <li>Quality control</li>
 <li>Homoeologous Mapping</li>
 <li>Read sorting by EAGLE-RC</li>
-<li>Expression analysis</li>
+<li>Read count
+<ol type="1">
+<li>read count</li>
+<li>make count matrix</li>
+</ol></li>
+<li>Expression analysis
+<ol type="1">
 <li>Clustering</li>
 <li>Homoeolog ratio test</li>
-<li>GO enrichment analysis (if we have time…)</li>
+</ol></li>
 </ol>
 </div>
 </section>
@@ -510,7 +528,9 @@ Moeko Okada
 </section>
 <section id="data-download" class="slide level2">
 <h2>1. Data download</h2>
-<p>1-1. Download genome data</p>
+<p>Error messages may appear during extraction, but just ignore them!</p>
+<p><br></p>
+<h4 id="download-genome-data">1-1. Download genome data</h4>
 <div class="sourceCode" id="cb2"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1"></a><span class="ex">$</span> cd src</span>
 <span id="cb2-2"><a href="#cb2-2"></a><span class="ex">src</span> $ pwd</span>
 <span id="cb2-3"><a href="#cb2-3"></a><span class="ex">/tmp/eagle/work/polyploid-rna-seq-analyses/src</span></span>
@@ -523,8 +543,9 @@ Moeko Okada
 <span id="cb2-10"><a href="#cb2-10"></a><span class="ex">src</span> $</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section>
 <section id="data-download-1" class="slide level2">
-<h2>Data download</h2>
-<p>1-2. Download raw sequence data</p>
+<h2>1. Data download</h2>
+<p><br></p>
+<h4 id="download-raw-sequence-data">1-2. Download raw sequence data</h4>
 <div class="sourceCode" id="cb3"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1"></a><span class="ex">$</span> cd /src</span>
 <span id="cb3-2"><a href="#cb3-2"></a><span class="ex">src</span> $ pwd</span>
 <span id="cb3-3"><a href="#cb3-3"></a><span class="ex">/tmp/eagle/work/polyploid-rna-seq-analyses/src</span></span>
@@ -744,6 +765,11 @@ Moeko Okada
 <p>To make it faster and simpler, we will use <code>*.eaglerc1.ref.bam</code> and <code>*.eaglerc1.alt.bam</code>.</p>
 </div>
 </section>
+<section>
+<section id="expression-analysis" class="title-slide slide level1 center">
+<h1>5. Expression analysis</h1>
+
+</section>
 <section id="count-mapped-read" class="slide level2">
 <h2>5-1. Count mapped read</h2>
 <p>featureCounts (<a href="https://academic.oup.com/bioinformatics/article/30/7/923/232889">Liao et al.&nbsp;<em>Bioinformatics</em> 2014.</a>)</p>
@@ -849,21 +875,165 @@ Moeko Okada
 <span id="cb12-10"><a href="#cb12-10"></a><span class="ex">4_count</span> $</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p><br></p>
 </section>
-<section id="practice-2" class="slide level2">
-<h2>Practice 2</h2>
-<ul>
-<li>Expression analysis</li>
-<li>Clustering</li>
-<li>Homoeolog ratio test</li>
-</ul>
+<section id="expression-analysis-1" class="slide level2">
+<h2>6. Expression analysis</h2>
+<p>Use R for calculation nad visualization.</p>
+<p>Please move to the R console.</p>
+<p><br></p>
+<p>Required package information is written in <a href="https://github.com/MoekoOkada/SummerSchool_2023/blob/main/scripts/install.r">install.R</a>.</p>
 </section>
-<section id="excersice" class="slide level2">
-<h2>Excersice</h2>
-<p>How about the zinc treated samples?</p>
+<section id="required-libraries" class="slide level2">
+<h2>Required libraries</h2>
+<div class="sourceCode" id="cb13"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1"></a><span class="fu">library</span>(edgeR) <span class="co"># normalisation, deg detection</span></span>
+<span id="cb13-2"><a href="#cb13-2"></a><span class="fu">library</span>(DESeq2) <span class="co"># normalisation, deg detection</span></span>
+<span id="cb13-3"><a href="#cb13-3"></a><span class="fu">library</span>(dplyr) <span class="co"># data formatting</span></span>
+<span id="cb13-4"><a href="#cb13-4"></a><span class="fu">library</span>(stringr) <span class="co"># data formatting</span></span>
+<span id="cb13-5"><a href="#cb13-5"></a><span class="fu">library</span>(gplots) <span class="co"># plot heatmap</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="load-data" class="slide level2">
+<h2>Load data</h2>
+<div class="sourceCode" id="cb14"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1"></a><span class="do">## load count data</span></span>
+<span id="cb14-2"><a href="#cb14-2"></a><span class="co"># set working directory</span></span>
+<span id="cb14-3"><a href="#cb14-3"></a><span class="fu">setwd</span>(<span class="st">"/tmp/eagle/work/polyploid-rna-seq-analyses/src/exp"</span>)</span>
+<span id="cb14-4"><a href="#cb14-4"></a></span>
+<span id="cb14-5"><a href="#cb14-5"></a><span class="co"># load count data of halleri side</span></span>
+<span id="cb14-6"><a href="#cb14-6"></a>hal_count <span class="ot">&lt;-</span> <span class="fu">read.table</span>(<span class="st">"hal_counts.tsv"</span>, <span class="at">header =</span> T, <span class="at">row.names =</span> <span class="dv">1</span>, <span class="at">sep =</span> <span class="st">"</span><span class="sc">\t</span><span class="st">"</span>)</span>
+<span id="cb14-7"><a href="#cb14-7"></a></span>
+<span id="cb14-8"><a href="#cb14-8"></a><span class="co"># check hal count data</span></span>
+<span id="cb14-9"><a href="#cb14-9"></a><span class="fu">head</span>(hal_count)</span>
+<span id="cb14-10"><a href="#cb14-10"></a></span>
+<span id="cb14-11"><a href="#cb14-11"></a><span class="co"># load count data of lyrata side</span></span>
+<span id="cb14-12"><a href="#cb14-12"></a>lyr_count <span class="ot">&lt;-</span> <span class="fu">read.table</span>(<span class="st">"lyr_counts.tsv"</span>, <span class="at">header =</span> T, <span class="at">row.names =</span> <span class="dv">1</span>, <span class="at">sep =</span> <span class="st">"</span><span class="sc">\t</span><span class="st">"</span>)</span>
+<span id="cb14-13"><a href="#cb14-13"></a></span>
+<span id="cb14-14"><a href="#cb14-14"></a><span class="co"># check lyr count data</span></span>
+<span id="cb14-15"><a href="#cb14-15"></a><span class="fu">head</span>(lyr_counr)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="data-prep.-for-eagle-rc" class="slide level2">
+<h2>Data prep. for EAGLE-RC</h2>
+<ol type="1">
+<li>Make whole count matrix</li>
+<li>Load the gene length info of halleri</li>
+<li>calculate RPKM using DESeq2</li>
+</ol>
+<div class="sourceCode" id="cb15"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1"></a><span class="co"># bind count data</span></span>
+<span id="cb15-2"><a href="#cb15-2"></a>count <span class="ot">&lt;-</span> <span class="fu">cbind</span>(hal_count, lyr_count) <span class="co"># cbind merges the two data frame based on rownames</span></span>
+<span id="cb15-3"><a href="#cb15-3"></a><span class="co"># check data</span></span>
+<span id="cb15-4"><a href="#cb15-4"></a><span class="fu">head</span>(count)</span>
+<span id="cb15-5"><a href="#cb15-5"></a></span>
+<span id="cb15-6"><a href="#cb15-6"></a><span class="co"># load gene length of hal</span></span>
+<span id="cb15-7"><a href="#cb15-7"></a>Ahal_gtf <span class="ot">&lt;-</span> <span class="fu">read.table</span>(<span class="st">"../genome/Ahal_v2_2.gtf"</span>, <span class="at">header =</span> F, <span class="at">sep =</span> <span class="st">"</span><span class="sc">\t</span><span class="st">"</span>)</span>
+<span id="cb15-8"><a href="#cb15-8"></a>Ahal_gtf <span class="ot">&lt;-</span> <span class="fu">filter</span>(Ahal_gtf, V3 <span class="sc">==</span> <span class="st">"transcript"</span>) <span class="co"># extract transcript information</span></span>
+<span id="cb15-9"><a href="#cb15-9"></a>len <span class="ot">&lt;-</span> Ahal_gtf<span class="sc">$</span>V5 <span class="sc">-</span> Ahal_gtf<span class="sc">$</span>V4 <span class="sc">+</span> <span class="dv">1</span> <span class="co"># define length based on start and end position of each genes</span></span>
+<span id="cb15-10"><a href="#cb15-10"></a></span>
+<span id="cb15-11"><a href="#cb15-11"></a><span class="co"># Calculate RPKM</span></span>
+<span id="cb15-12"><a href="#cb15-12"></a>rpkm <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(<span class="fu">rpkm</span>(count, len, <span class="at">log =</span> <span class="cn">FALSE</span>)) <span class="co"># rpkm function in DESeq2 package</span></span>
+<span id="cb15-13"><a href="#cb15-13"></a>table_rpkm <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(rpkm, <span class="at">n =</span> <span class="fu">nrow</span>(count)) <span class="co"># convert to table</span></span>
+<span id="cb15-14"><a href="#cb15-14"></a><span class="fu">head</span>(table_rpkm)</span>
+<span id="cb15-15"><a href="#cb15-15"></a><span class="fu">write.table</span>(table_rpkm, <span class="at">file =</span> <span class="fu">paste0</span>(<span class="st">"homoeolog_RPKM.txt"</span>), <span class="at">col.names =</span> T, <span class="at">row.names =</span> T, <span class="at">sep =</span> <span class="st">"</span><span class="sc">\t</span><span class="st">"</span>) <span class="co"># Output</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="make-count-matrix-for-each-condition-control-and-zinc-for-expression-analysis" class="slide level2">
+<h2>make count matrix for each condition (control and zinc) for expression analysis</h2>
+<div class="sourceCode" id="cb16"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1"></a><span class="co"># select function in dplyr package</span></span>
+<span id="cb16-2"><a href="#cb16-2"></a>control <span class="ot">&lt;-</span> <span class="fu">select</span>(count, <span class="sc">-</span><span class="fu">contains</span>(<span class="st">"48h"</span>)) <span class="co"># Select columns without "48h"</span></span>
+<span id="cb16-3"><a href="#cb16-3"></a><span class="fu">head</span>(control)</span>
+<span id="cb16-4"><a href="#cb16-4"></a>zinc <span class="ot">&lt;-</span> <span class="fu">select</span>(count, <span class="fu">contains</span>(<span class="st">"48h"</span>)) <span class="co"># Select columns with "48h"</span></span>
+<span id="cb16-5"><a href="#cb16-5"></a><span class="fu">head</span>(zinc)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="expression-analysis-2" class="slide level2">
+<h2>Expression analysis</h2>
+<p>Use edgeR to compare halleri side and kamchatica side under zinc treatment.</p>
+<div class="sourceCode" id="cb17"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1"></a><span class="co"># set groups</span></span>
+<span id="cb17-2"><a href="#cb17-2"></a>group <span class="ot">&lt;-</span> <span class="fu">factor</span>(<span class="fu">c</span>(<span class="st">"kam_hal"</span>, <span class="st">"kam_hal"</span>, <span class="st">"kam_hal"</span>, <span class="st">"kam_lyr"</span>, <span class="st">"kam_lyr"</span>, <span class="st">"kam_lyr"</span>))</span>
+<span id="cb17-3"><a href="#cb17-3"></a>design <span class="ot">&lt;-</span> <span class="fu">model.matrix</span>(<span class="sc">~</span>group)</span>
+<span id="cb17-4"><a href="#cb17-4"></a></span>
+<span id="cb17-5"><a href="#cb17-5"></a><span class="co"># DEG detection from zinc treated samples</span></span>
+<span id="cb17-6"><a href="#cb17-6"></a>d1 <span class="ot">&lt;-</span> <span class="fu">DGEList</span>(<span class="at">counts =</span> zinc, <span class="at">group =</span> group)</span>
+<span id="cb17-7"><a href="#cb17-7"></a></span>
+<span id="cb17-8"><a href="#cb17-8"></a><span class="co"># normalize according to UserGuide</span></span>
+<span id="cb17-9"><a href="#cb17-9"></a>d1 <span class="ot">&lt;-</span> <span class="fu">calcNormFactors</span>(d1)</span>
+<span id="cb17-10"><a href="#cb17-10"></a>d1 <span class="ot">&lt;-</span> <span class="fu">estimateDisp</span>(d1, design)</span>
+<span id="cb17-11"><a href="#cb17-11"></a></span>
+<span id="cb17-12"><a href="#cb17-12"></a><span class="co"># plot Multi-dimensional scaling</span></span>
+<span id="cb17-13"><a href="#cb17-13"></a><span class="fu">plotMDS</span>(d1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="msd-plot" class="slide level2">
+<h2>MSD plot</h2>
+
+<img data-src="./photos/mds.png" class="r-stretch"></section>
+<section id="heatmap-of-metal-related-gene" class="slide level2">
+<h2>Heatmap of metal-related gene</h2>
+<p>First, format data to draw heatmap.</p>
+<div class="sourceCode" id="cb18"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1"></a><span class="co"># calculate cpm and format it for heatmap</span></span>
+<span id="cb18-2"><a href="#cb18-2"></a>d2 <span class="ot">&lt;-</span> <span class="fu">cpm</span>(d1, <span class="at">normalized.lib.size =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb18-3"><a href="#cb18-3"></a>scaledata <span class="ot">&lt;-</span> <span class="fu">t</span>(<span class="fu">scale</span>(<span class="fu">t</span>(d2))) <span class="co"># Centers and scales data.</span></span>
+<span id="cb18-4"><a href="#cb18-4"></a>scaledata <span class="ot">&lt;-</span> scaledata[<span class="fu">complete.cases</span>(scaledata), ]</span>
+<span id="cb18-5"><a href="#cb18-5"></a></span>
+<span id="cb18-6"><a href="#cb18-6"></a><span class="co"># Change ids</span></span>
+<span id="cb18-7"><a href="#cb18-7"></a><span class="fu">rownames</span>(scaledata) <span class="ot">&lt;-</span> <span class="fu">lapply</span>(<span class="fu">rownames</span>(scaledata), gsub, <span class="at">pattern =</span> <span class="st">".t1"</span>, <span class="at">replacement =</span> <span class="st">""</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="heatmap-of-metal-related-gene-1" class="slide level2">
+<h2>Heatmap of metal-related gene</h2>
+<p>Extract metal-related gene from expression table.</p>
+<div class="sourceCode" id="cb19"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1"></a><span class="co"># make a gene set</span></span>
+<span id="cb19-2"><a href="#cb19-2"></a>metal_genes <span class="ot">&lt;-</span> <span class="fu">read.table</span>(<span class="st">"metal_genes_ids.txt"</span>, <span class="at">sep =</span> <span class="st">"</span><span class="sc">\t</span><span class="st">"</span>, <span class="at">header =</span> T)</span>
+<span id="cb19-3"><a href="#cb19-3"></a>metal_genes[, <span class="dv">4</span>]</span>
+<span id="cb19-4"><a href="#cb19-4"></a></span>
+<span id="cb19-5"><a href="#cb19-5"></a><span class="co"># Extract metal genes from deg files</span></span>
+<span id="cb19-6"><a href="#cb19-6"></a>my.geneset <span class="ot">&lt;-</span> scaledata[<span class="fu">rownames</span>(scaledata) <span class="sc">%in%</span> metal_genes[, <span class="dv">4</span>], ]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="heatmap-of-metal-related-gene-2" class="slide level2">
+<h2>Heatmap of metal-related gene</h2>
+<p>Hierarchical clustering</p>
+<div class="sourceCode" id="cb20"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1"></a><span class="co"># clustering</span></span>
+<span id="cb20-2"><a href="#cb20-2"></a>hr <span class="ot">&lt;-</span> <span class="fu">hclust</span>(<span class="fu">as.dist</span>(<span class="dv">1</span> <span class="sc">-</span> <span class="fu">cor</span>(<span class="fu">t</span>(my.geneset), <span class="at">method =</span> <span class="st">"pearson"</span>)), <span class="at">method =</span> <span class="st">"complete"</span>)</span>
+<span id="cb20-3"><a href="#cb20-3"></a>hc <span class="ot">&lt;-</span> <span class="fu">hclust</span>(<span class="fu">as.dist</span>(<span class="dv">1</span> <span class="sc">-</span> <span class="fu">cor</span>(my.geneset, <span class="at">method =</span> <span class="st">"spearman"</span>)), <span class="at">method =</span> <span class="st">"complete"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="heatmap-of-metal-related-gene-3" class="slide level2">
+<h2>Heatmap of metal-related gene</h2>
+<p>Plot heatmap based on the clustering information.</p>
+<p>Use <code>heatmap.2</code> function in <code>gplot</code> package.</p>
+<div class="sourceCode" id="cb21"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1"></a><span class="co"># Clustering of metal related genes</span></span>
+<span id="cb21-2"><a href="#cb21-2"></a><span class="fu">png</span>(<span class="fu">paste0</span>(<span class="st">"Cluster_hm_zinc.png"</span>))</span>
+<span id="cb21-3"><a href="#cb21-3"></a><span class="fu">heatmap.2</span>(my.geneset,</span>
+<span id="cb21-4"><a href="#cb21-4"></a>  <span class="at">Rowv =</span> <span class="fu">as.dendrogram</span>(hr),</span>
+<span id="cb21-5"><a href="#cb21-5"></a>  <span class="at">Colv =</span> <span class="fu">as.dendrogram</span>(hc),</span>
+<span id="cb21-6"><a href="#cb21-6"></a>  <span class="at">col =</span> <span class="fu">colorRampPalette</span>(<span class="fu">c</span>(<span class="st">"blue"</span>, <span class="st">"yellow"</span>))(<span class="dv">100</span>),</span>
+<span id="cb21-7"><a href="#cb21-7"></a>  <span class="at">scale =</span> <span class="st">"row"</span>,</span>
+<span id="cb21-8"><a href="#cb21-8"></a>  <span class="at">cexCol =</span> <span class="fl">0.7</span>,</span>
+<span id="cb21-9"><a href="#cb21-9"></a>  <span class="at">main =</span> <span class="st">"Heatmap.2"</span>,</span>
+<span id="cb21-10"><a href="#cb21-10"></a>  <span class="at">trace =</span> <span class="st">"none"</span></span>
+<span id="cb21-11"><a href="#cb21-11"></a>)</span>
+<span id="cb21-12"><a href="#cb21-12"></a><span class="fu">dev.off</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="advanced-excercise-1" class="slide level2">
+<h2>Advanced Excercise 1</h2>
+<p>How about the expression patterns of metal-related genes in control samples?</p>
+</section>
+<section id="advanced-excercise-2" class="slide level2">
+<h2>Advanced Excercise 2</h2>
+<p>Compare expression between control and zinc condition.</p>
+</section>
+<section id="homoeologous-ratio-test" class="slide level2">
+<h2>Homoeologous Ratio Test</h2>
+<ul>
+<li>Calculate expression ratio using R script provided by “HomeoRoq”</li>
+<li>Required files
+<ul>
+<li>RPKM matrix</li>
+<li>label info</li>
+<li>three R scripts</li>
+</ul></li>
+</ul>
+
+<aside><div>
+<p><a href="https://academic.oup.com/nar/article/42/6/e46/2437554">Akama et al.&nbsp;<em>Nucleic Acids Research</em> 2014</a></p>
+</div></aside></section>
+<section id="section" class="slide level2">
+<h2></h2>
 <div class="footer footer-default">
 
 </div>
-</section>
+</section></section>
     </div>
   </div>
 
