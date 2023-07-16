@@ -455,10 +455,8 @@ Make sure you are in the `4_count` directory!
 
 ```bash
 src $ cd 4_count
-4_count $ (echo "gene_id";ls *_hal_counts.txt; ) | sed -e s/_hal_counts.txt//g | tr '\n' '_hal\t' | sed 's/\s*$//' > hal_counts.tsv
-4_count $ (echo "gene_id";ls *_lyr_counts.txt; ) | sed -e s/_ds_lyr_counts.txt//g | tr '\n' '_lyr\t' | sed 's/\s*$//' > lyr_counts.tsv
-4_count $ echo "" >> hal_counts.tsv
-4_count $ echo "" >> lyr_counts.tsv
+4_count $ (echo "gene_id";ls *_hal_counts.txt; ) | sed -e s/_hal_counts.txt//g | (awk '{if (NR > 1) printf "\t"} {printf "%s_hal", $0}' && echo) > hal_counts.tsv
+4_count $ (echo "gene_id";ls *_lyr_counts.txt; ) | sed -e s/_lyr_counts.txt//g | (awk '{if (NR > 1) printf "\t"} {printf "%s_hal", $0}' && echo) > lyr_counts.tsv
 4_count $ python /tmp/eagle/scripts/tablize.py -skip 1 -a -i 0 -c 6 *_hal_counts.txt >> hal_counts.tsv
 4_count $ python /tmp/eagle/scripts/tablize.py -skip 1 -a -i 0 -c 6 *_lyr_counts.txt >> lyr_counts.tsv
 4_count $
