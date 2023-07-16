@@ -21,6 +21,7 @@ len <- Ahal_gtf$V5 - Ahal_gtf$V4 + 1
 # Calculate RPKM
 rpkm <- as.data.frame(rpkm(count, len, log = FALSE))
 table_rpkm <- as.data.frame(rpkm, n = nrow(count))
+table_rpkm$gene <- rownames(table_rpkm)
 head(table_rpkm)
 write.table(table_rpkm, file = paste0("homoeolog_RPKM.txt"), col.names = T, row.names = T, sep = "\t")
 

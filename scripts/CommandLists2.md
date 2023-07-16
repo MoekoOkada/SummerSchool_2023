@@ -198,6 +198,7 @@ It takes maybe 30-40 min...
 ### Plot differentially expressed homoeologs
 
 ```bash
-scripts $ Rscript plot_homeoroq.R pval.txt MUR MUR_48h
-scripts $
+scripts $ cd ../exp
+exp $ Rscript ../scripts/plot_homeoroq.R pval.txt MUR MUR_R48h
+exp $
 ```
