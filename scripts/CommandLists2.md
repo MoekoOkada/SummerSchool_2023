@@ -165,7 +165,7 @@ hc <- hclust(as.dist(1 - cor(my.geneset, method = "spearman")), method = "comple
 
 Plot heatmap based on the clustering information.
 
-Use `heatmap.2` function in `gplot` package.
+Use `heatmap.2` function in `gplots` package.
 
 ```R
 # Clustering of metal-related genes
