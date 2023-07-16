@@ -47,7 +47,7 @@ library(edgeR) # normalisation, deg detection
 library(DESeq2) # normalisation, deg detection
 library(dplyr) # data formatting
 library(stringr) # data formatting
-library(gplot) # plot heatmap
+library(gplots) # plot heatmap
 ```
 
 ### Load data
@@ -55,7 +55,7 @@ library(gplot) # plot heatmap
 ```r
 ## load count data
 # set working directory
-setwd("/tmp/eagle/work/polyploid-rna-seq-analyses/src/exp")
+setwd("src/exp")
 
 # load count data of halleri side
 hal_count <- read.table("hal_counts.tsv", header = T, row.names = 1, sep = "\t")
@@ -67,7 +67,7 @@ head(hal_count)
 lyr_count <- read.table("lyr_counts.tsv", header = T, row.names = 1, sep = "\t")
 
 # check lyr count data
-head(lyr_counr)
+head(lyr_count)
 ```
 
 ### Data prep. for EAGLE-RC
