@@ -63,9 +63,9 @@ plot(ctrlRatio[hasTagInCtrl & hasTagInCold],
      col = "#55555588",
      pch = 20,
      xlim = c(0, 1), ylim = c(0, 1),
-     # xlab="A-origin ratio in FRbrF0418", ylab="A-origin ratio in FRslF0418", cex=1.0) # change "cold" to "stress"
+     # xlab="H-origin ratio in FRbrF0418", ylab="H-origin ratio in FRslF0418", cex=1.0) # change "cold" to "stress"
      main = paste(sum(hasTagInCtrl & hasTagInCold), "genes, Sig:", sum(hasTagInCtrl & hasTagInCold & sigGenes & ratiosdFiltering), "genes (padj <", PADJ, "),", sprintf("R=%.2f", r_col), ",\n TPM >", MINRPKM, ", ratioSD <", MINRATIOSD),
-     xlab = paste("A-origin ratio in", control), ylab = paste("A-origin ratio in", target), cex = 1.0
+     xlab = paste("H-origin ratio in", control), ylab = paste("H-origin ratio in", target), cex = 1.0
 ) # change "cold" to "stress"
 par(new = T)
 plot(ctrlRatio[hasTagInCtrl & hasTagInCold & sigGenes & ratiosdFiltering],
@@ -84,8 +84,8 @@ cat("R=", r_col, "\n")
 
 pdf(paste("hist_overdispersion_", control, "_vs_", target, ".pdf", sep = ""))
 par(mfrow = c(2, 1))
-hist(ctrlRatio[hasTagInCtrl & hasTagInCold], xlab = paste("A-origin ratio in", control), main = "", col = "gray", yaxt = "n")
+hist(ctrlRatio[hasTagInCtrl & hasTagInCold], xlab = paste("H-origin ratio in", control), main = "", col = "gray", yaxt = "n")
 axis(side = 2, at = seq(0, 2500, 500), labels = c(0, 500, "", 1500, "", 2500), las = 2)
-hist(coldRatio[hasTagInCtrl & hasTagInCold], xlab = paste("A-origin ratio in", target), main = "", col = "gray", yaxt = "n")
+hist(coldRatio[hasTagInCtrl & hasTagInCold], xlab = paste("H-origin ratio in", target), main = "", col = "gray", yaxt = "n")
 axis(side = 2, at = seq(0, 2500, 500), labels = c(0, 500, "", 1500, "", 2500), las = 2)
 dev.off()
