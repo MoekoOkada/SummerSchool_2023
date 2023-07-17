@@ -189,7 +189,7 @@ dev.off()
 
 ```bash
 src $ cd scripts
-scripts $ cd
+scripts $ R --vanilla --slave --args ../exp/pval.txt ../exp/homoeolog_RPKM.txt label.txt < calcpval_one.R
 ```
 
 It takes maybe 30-40 min...
