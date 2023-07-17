@@ -40,8 +40,9 @@ Then click "Fork Project" icon
 1. Click "V" icon
 2. Select "Start with options"
 3. Select:
-    - r, 2 CPU,
-    - 8G RAM,
+    - rstudio
+    - 2 CPU
+    - 8G RAM
     - 64G storage
 4. Click "Start session" icon.
 
