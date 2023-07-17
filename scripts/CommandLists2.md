@@ -70,7 +70,7 @@ lyr_count <- read.table("lyr_counts.tsv", header = T, row.names = 1, sep = "\t")
 head(lyr_count)
 ```
 
-### Data prep. for EAGLE-RC
+### Data prep. for homoeologous ratio test
 
 1. Make a whole count matrix
 2. Load the gene length info of halleri
@@ -193,6 +193,8 @@ scripts $ R --vanilla --slave --args ../exp/pval.txt ../exp/homoeolog_RPKM.txt l
 ```
 
 It takes maybe 30-40 min...
+
+For the details of homoeologous ratio test, please refer the paper [Akama et al. _Nucl. Acid Res._ 2014](https://academic.oup.com/nar/article/42/6/e46/2437554).
 
 ## Homoeologous ratio test
 

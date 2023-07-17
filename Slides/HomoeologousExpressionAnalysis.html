@@ -879,15 +879,15 @@ Moeko Okada
 <span id="cb14-14"><a href="#cb14-14"></a><span class="co"># check lyr count data</span></span>
 <span id="cb14-15"><a href="#cb14-15"></a><span class="fu">head</span>(lyr_count)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section>
-<section id="data-prep.-for-eagle-rc" class="slide level2">
-<h2>6-1-2. Data prep. for EAGLE-RC</h2>
+<section id="data-prep.-for-homoeologous-ratio-test" class="slide level2">
+<h2>6-1-2. Data prep. for homoeologous ratio test</h2>
 <ol type="1">
 <li>Make a whole count matrix</li>
 <li>Load the gene length info of halleri</li>
 <li>calculate RPKM using DESeq2</li>
 </ol>
 </section>
-<section id="data-prep.-for-eagle-rc-1" class="slide level2">
+<section id="data-prep.-for-eagle-rc" class="slide level2">
 <h2>6-2. Data prep. for EAGLE-RC</h2>
 <div class="sourceCode" id="cb15"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1"></a><span class="co"># bind count data</span></span>
 <span id="cb15-2"><a href="#cb15-2"></a>count <span class="ot">&lt;-</span> <span class="fu">cbind</span>(hal_count, lyr_count) <span class="co"># cbind merges the two data frame based on rownames</span></span>
@@ -968,7 +968,7 @@ Moeko Okada
 </section>
 <section id="plot-heatmap-based-on-the-clustering-information." class="slide level2">
 <h2>6-2-4. Plot heatmap based on the clustering information.</h2>
-<p>Use the <code>heatmap.2</code> function in the <code>gplot</code> package.</p>
+<p>Use the <code>heatmap.2</code> function in the <code>gplots</code> package.</p>
 <div class="sourceCode" id="cb21"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1"></a><span class="co"># Clustering of metal-related genes</span></span>
 <span id="cb21-2"><a href="#cb21-2"></a><span class="fu">png</span>(<span class="fu">paste0</span>(<span class="st">"Cluster_hm_zinc.png"</span>))</span>
 <span id="cb21-3"><a href="#cb21-3"></a><span class="fu">heatmap.2</span>(my.geneset,</span>
@@ -1040,7 +1040,10 @@ Moeko Okada
 <span id="cb24-2"><a href="#cb24-2"></a><span class="ex">scripts</span> $ R <span class="at">--vanilla</span> <span class="at">--slave</span> <span class="at">--args</span> ../exp/pval.txt ../exp/homoeolog_RPKM.txt label.txt <span class="op">&lt;</span> calcpval_one.R</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p><br></p>
 <p>This process takes a while… How about a coffee break?</p>
-</section>
+
+<aside><div>
+<p><a href="https://academic.oup.com/nar/article/42/6/e46/2437554">Akama et al.&nbsp;<em>Nucl. Acid Res.</em> 2014</a></p>
+</div></aside></section>
 <section id="plot-homoeolog-ratio" class="slide level2">
 <h2>6-3-2. Plot homoeolog ratio</h2>
 <p>Make sure you are in the <code>exp</code> directory!</p>

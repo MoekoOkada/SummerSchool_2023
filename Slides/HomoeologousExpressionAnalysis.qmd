@@ -511,7 +511,7 @@ lyr_count <- read.table("lyr_counts.tsv", header = T, row.names = 1, sep = "\t")
 head(lyr_count)
 ```
 
-## 6-1-2. Data prep. for EAGLE-RC
+## 6-1-2. Data prep. for homoeologous ratio test
 
 
 1. Make a whole count matrix
@@ -618,7 +618,7 @@ hc <- hclust(as.dist(1 - cor(my.geneset, method = "spearman")), method = "comple
 
 ## 6-2-4. Plot heatmap based on the clustering information.
 
-Use the `heatmap.2` function in the `gplot` package.
+Use the `heatmap.2` function in the `gplots` package.
 
 ```R
 # Clustering of metal-related genes
@@ -710,6 +710,12 @@ scripts $ R --vanilla --slave --args ../exp/pval.txt ../exp/homoeolog_RPKM.txt l
 <br>
 
 This process takes a while... How about a coffee break?
+
+:::aside
+
+[Akama et al. _Nucl. Acid Res._ 2014](https://academic.oup.com/nar/article/42/6/e46/2437554)
+
+:::
 
 ## 6-3-2. Plot homoeolog ratio
 
