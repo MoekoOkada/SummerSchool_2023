@@ -10,7 +10,7 @@ Moeko Okada
 
 ## Today's Plan
 
-Part 1: 
+Part 1: [https://github.com/MoekoOkada/SummerSchool_2023/blob/main/scripts/CommandLists1.md](https://github.com/MoekoOkada/SummerSchool_2023/blob/main/scripts/CommandLists1.md)
 1. Data download
 2. Quality control
 3. Homoeologous Mapping
