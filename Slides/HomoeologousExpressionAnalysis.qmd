@@ -464,6 +464,24 @@ src $ cd 4_count
 
 <br>
 
+## HomeoRoq and EAGLE-RC
+
+:::{style="font-size:0.8em"}
+
+- **HomeoRoq**
+  - Read classification based on mismatch ratio (less accurate)
+  - **Homoeologous ratio test (analyse if the gene shows differential expression among homoeologs)**
+  - **Rscript for vidualisation**
+
+<br>
+
+- **EAGLE-RC**
+  - **Read classification based on mismatch ratio and likelihood (more accurate)**
+  - No homoeologous ratio test
+  - No vidualisation
+
+:::
+
 ## 6-1. Expression analysis
 
 Use R for calculation and visualization.
