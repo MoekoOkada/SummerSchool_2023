@@ -88,10 +88,11 @@ Ahal_gtf <- filter(Ahal_gtf, V3 == "transcript") # extract transcript informatio
 len <- Ahal_gtf$V5 - Ahal_gtf$V4 + 1 # define length based on start and end position of each gene
 
 # Calculate RPKM
-rpkm <- as.data.frame(rpkm(count, len, log = FALSE)) # rpkm function in DESeq2 package
-table_rpkm <- as.data.frame(rpkm, n = nrow(count)) # convert to table
+rpkm <- as.data.frame(rpkm(count, len, log = FALSE))
+table_rpkm <- as.data.frame(rpkm, n = nrow(count))
+table_rpkm$gene <- rownames(table_rpkm)
 head(table_rpkm)
-write.table(table_rpkm, file = paste0("homoeolog_RPKM.txt"), col.names = T, row.names = T, sep = "\t") # Output
+write.table(table_rpkm, file = paste0("homoeolog_RPKM.txt"), col.names = T, row.names = T, sep = "\t")
 ```
 
 ### Make a count matrix for each condition (control and zinc) for expression analysis
@@ -188,7 +189,7 @@ dev.off()
 
 ```bash
 src $ cd scripts
-scripts $ R --vanilla --slave --args ../exp/pval.txt ../exp/homoeolog_RPKM.txt label.txt < calcpval_one.R
+scripts $ cd
 ```
 
 It takes maybe 30-40 min...
