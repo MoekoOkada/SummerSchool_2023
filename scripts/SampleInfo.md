@@ -1,6 +1,6 @@
 # Sample information
 
-Project: Zinc accumulation (Paape et al. 2016 MBE)  
+Project: Zinc accumulation [Paape et al. 2016 MBE](https://academic.oup.com/mbe/article/33/11/2781/2271619)  
 Date: 3-Jul-2023  
 Author: Moeko Okada  
 
