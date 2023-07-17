@@ -639,18 +639,6 @@ dev.off()
 
 ![](./photos/Cluster_hm_zinc.png)
 
-## Advanced Excercise 1
-
-<br>
-
-How about the expression patterns of metal-related genes in control samples?
-
-## Advanced Excercise 2
-
-<br>
-
-Compare expression between control and zinc condition for halleri and lyrata side, respectively.
-
 ## 6-3. Homoeologous Ratio Test
 
 <br>
@@ -749,3 +737,38 @@ Now you got two pdf files.
 ## Homoeolog ratio plots
 
 ![](./photos/ratio_overdispersion_MUR_vs_MUR_48h.png)
+
+
+## Advanced Excercise 1
+
+<br>
+
+How about the expression patterns of metal-related genes in control samples?
+
+## Advanced Excercise 2
+
+<br>
+
+Compare expression between control and zinc condition for halleri and lyrata side, respectively.
+
+## Advanced Excercise 3
+
+<br>
+
+Try homoeologous ratio test with count table from down sampled data (hal_counts.tsv and lyr_counts.tsv in src/4_count).
+
+Is there any difference?
+
+## Advanced Excercise 4
+
+<br>
+
+Check the actual homoeolog ratio of each zinc genes (actual expression levels), then check if all of them are significant or not by homoeologous ratio change.
+
+## Advanced Excercise 5
+
+<br>
+
+Choose one metal-related gene.
+
+Make a bar plots of actual expression level both in halleri and lyrata side with control and zinc condition.
