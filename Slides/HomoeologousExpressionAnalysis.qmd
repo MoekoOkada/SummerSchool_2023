@@ -248,7 +248,7 @@ samtools ([Li et al. _Bioinfirmatics_ 2008.](https://academic.oup.com/bioinforma
 
 ## 3. Homoeologous Mapping
 
-Use shell script `2_map.sh` to run Trimmomatics for all data.
+Use shell script `2_map.sh` to run hisat2 for all data.
 
 ```shell
 #!/bin/sh
@@ -341,7 +341,7 @@ https://github.com/tony-kuo/eagle
 
 ## 4. Read sorting by EAGLE-RC
 
-Use shell script `3_eagle.sh` to run Trimmomatics for all data.
+Use shell script `3_eagle.sh` to run EAGLE-RC for all data.
 
 ```shell
 #!/bin/sh
@@ -403,7 +403,7 @@ featureCounts ([Liao et al. _Bioinformatics_ 2014.](https://academic.oup.com/bio
 
 ## 5-1. Count mapped read
 
-Use shell script `4_count.sh` to run Trimmomatics for all data.
+Use shell script `4_count.sh` to run featureCounts for all data.
 
 ```shell
 #!/bin/sh
