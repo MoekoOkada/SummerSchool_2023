@@ -7,8 +7,14 @@ Moeko Okada
 
 ## How to setup the RENKU platform
 
+- [https://github.com/MoekoOkada/SummerSchool_2023/blob/main/Slides/RenkuSetup.qmd](https://github.com/MoekoOkada/SummerSchool_2023/blob/main/Slides/RenkuSetup.qmd)
+
 
 ## Today's Plan
+
+Slides: [https://github.com/MoekoOkada/SummerSchool_2023/blob/main/Slides/HomoeologousExpressionAnalysis.qmd](https://github.com/MoekoOkada/SummerSchool_2023/blob/main/Slides/HomoeologousExpressionAnalysis.qmd)
+
+### Command lists
 
 Part 1: [https://github.com/MoekoOkada/SummerSchool_2023/blob/main/scripts/CommandLists1.md](https://github.com/MoekoOkada/SummerSchool_2023/blob/main/scripts/CommandLists1.md)
 1. Data download
