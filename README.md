@@ -19,7 +19,8 @@ Part 1: [https://github.com/MoekoOkada/SummerSchool_2023/blob/main/scripts/Comma
    1. read count
    2. make count matrix
 
-Part 2: 
+Part 2: [https://github.com/MoekoOkada/SummerSchool_2023/blob/main/scripts/CommandLists2.md](https://github.com/MoekoOkada/SummerSchool_2023/blob/main/scripts/CommandLists2.md)  
+
 6. Expression analysis
    1. Clustering
    2. Homoeolog ratio test
